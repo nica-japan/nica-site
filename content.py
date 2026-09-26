@@ -6,6 +6,9 @@
 編集だけを加えている。
 """
 
+import json
+from pathlib import Path
+
 
 def ext(url, label, kind="外部サイト"):
     """外部サイトへのリンク。読み上げでリンク先が分かる文言にする。"""
@@ -14,6 +17,60 @@ def ext(url, label, kind="外部サイト"):
 
 def yt(vid, label):
     return ext(f"https://youtu.be/{vid}", label, "YouTube")
+
+
+_MANIFEST = json.loads(
+    (Path(__file__).parent / "assets" / "img" / "manifest.json")
+    .read_text(encoding="utf-8")
+)
+
+
+def img(name, alt, caption, base="../"):
+    """写真・図版。WebP を優先し、寸法を入れて表示のガタつきを防ぐ。"""
+    m = _MANIFEST[name]
+    return (
+        "<figure>\n"
+        "  <picture>\n"
+        f'    <source srcset="{base}assets/img/{m["webp"]}" type="image/webp">\n'
+        f'    <img src="{base}assets/img/{m["jpg"]}" alt="{alt}"\n'
+        f'         width="{m["width"]}" height="{m["height"]}"\n'
+        '         loading="lazy" decoding="async">\n'
+        "  </picture>\n"
+        f"  <figcaption>{caption}</figcaption>\n"
+        "</figure>"
+    )
+
+
+def video(vid, thumb, caption, base="../../"):
+    """動画。開くまで YouTube へ通信しないよう details で包む。
+
+    サムネイルは自前で持っているので、閉じている間は外部への通信が
+    まったく発生しない。JavaScript も使わない。
+    """
+    m = _MANIFEST[thumb]
+    return (
+        '<figure class="video-figure">\n'
+        "  <details>\n"
+        "    <summary>\n"
+        '      <span class="play" aria-hidden="true"></span>\n'
+        f"      <span>動画を再生する（YouTube を読み込みます）</span>\n"
+        "    </summary>\n"
+        '    <div class="video">\n'
+        f'      <iframe src="https://www.youtube-nocookie.com/embed/{vid}"'
+        f' title="{caption}" loading="lazy"'
+        ' allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
+        " allowfullscreen></iframe>\n"
+        "    </div>\n"
+        "  </details>\n"
+        '  <picture class="video-thumb">\n'
+        f'    <source srcset="{base}assets/img/{m["webp"]}" type="image/webp">\n'
+        f'    <img src="{base}assets/img/{m["jpg"]}" alt=""\n'
+        f'         width="{m["width"]}" height="{m["height"]}"\n'
+        '         loading="lazy" decoding="async">\n'
+        "  </picture>\n"
+        f'  <figcaption>{caption}　{yt(vid, "この動画を YouTube で見る")}</figcaption>\n'
+        "</figure>"
+    )
 
 
 def records(items):
@@ -39,20 +96,6 @@ def cards(items):
         )
     out.append("</ul>")
     return "\n".join(out)
-
-
-def video(vid, caption):
-    return (
-        '<figure>\n'
-        '  <div class="video">\n'
-        f'    <iframe src="https://www.youtube-nocookie.com/embed/{vid}"'
-        f' title="{caption}" loading="lazy"'
-        ' allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
-        ' allowfullscreen></iframe>\n'
-        '  </div>\n'
-        f'  <figcaption>{caption}　{yt(vid, "この動画を YouTube で見る")}</figcaption>\n'
-        '</figure>'
-    )
 
 
 # =====================================================================
@@ -183,11 +226,11 @@ BLOCK = """
 
 <p>コード化点字ブロックの敷設場所、他詳細は """ + ext("https://www.wandmsystems.com", "W&Mシステムズ合同会社のホームページ") + """ をご覧ください。</p>
 
-<figure>
-  <img src="../assets/img/flyer-code-braille-block.jpg"
-       alt="コード化点字ブロックの案内チラシ。「スマホで『しゃべる点字ブロック』にグレードアップ！」という見出しのもと、既存の点字ブロックをマーキングでコード化し、スマホアプリで読み取ると音声案内が流れる仕組みが図で説明されている。アプリ「Walk And Mobile」は iOS・Android とも無料で利用できる。">
-  <figcaption>「コード化点字ブロック」によるAI音声情報案内サービスのご案内（制作：金沢工業大学／W&Mシステムズ合同会社）</figcaption>
-</figure>
+""" + img(
+    "flyer-code-braille-block.jpg",
+    "コード化点字ブロックの案内チラシ。「スマホで『しゃべる点字ブロック』にグレードアップ！」という見出しのもと、既存の点字ブロックをマーキングでコード化し、スマホアプリで読み取ると音声案内が流れる仕組みが図で説明されている。アプリ「Walk And Mobile」は iOS・Android とも無料で利用できる。",
+    "「コード化点字ブロック」によるAI音声情報案内サービスのご案内（制作：金沢工業大学／W&Mシステムズ合同会社）",
+) + """
 
 <h2>関連ページ</h2>
 """ + cards([
@@ -199,11 +242,11 @@ BLOCK = """
      "全国への普及に向けたご支援のお願いと振込先。"),
 ]) + """
 <h2>メディア掲載</h2>
-<figure>
-  <img src="../assets/img/rakutenchi-newsletter-807.jpg"
-       alt="株式会社東京楽天地の社内報「らくてんち」807号3ページ。「インクルーシブな社会を目指して」という見出しで、コード化点字ブロックサミットの様子と参加者の写真が掲載されている。">
-  <figcaption>株式会社 東京楽天地さまの社内報にて、コード化点字ブロックの開発会議「コード化点字ブロックサミット」の様子をご掲載頂きました。</figcaption>
-</figure>
+""" + img(
+    "rakutenchi-newsletter-807.jpg",
+    "株式会社東京楽天地の社内報「らくてんち」807号3ページ。「インクルーシブな社会を目指して」という見出しで、コード化点字ブロックサミットの様子と参加者の写真が掲載されている。",
+    "株式会社 東京楽天地さまの社内報にて、コード化点字ブロックの開発会議「コード化点字ブロックサミット」の様子をご掲載頂きました。",
+) + """
 """
 
 
@@ -259,7 +302,13 @@ BLOCK_VIDEOS = """
 <h1>紹介動画</h1>
 <p class="lead">コード化点字ブロックの実証実験と体験会の様子です。</p>
 
-""" + video("Ci3t_UwiusA", "2024年11月、錦糸町の楽天地ビルにて開催した、コード化点字ブロック実証実験の画面収録です。") + "\n\n" + video("iWx9VsSZDQk", "東京都墨田区、マルイ錦糸町店で開催したコード化点字ブロック体験会の様子です。") + """
+""" + video(
+    "Ci3t_UwiusA", "video-rakutenchi.jpg",
+    "2024年11月、錦糸町の楽天地ビルにて開催した、コード化点字ブロック実証実験の画面収録です。",
+) + "\n\n" + video(
+    "iWx9VsSZDQk", "video-marui-kinshicho.jpg",
+    "東京都墨田区、マルイ錦糸町店で開催したコード化点字ブロック体験会の様子です。",
+) + """
 
 <div class="pager">
   <a href="../">コード化点字ブロックのご紹介に戻る</a>
@@ -518,11 +567,14 @@ def _activities_index():
         "1ページが長くなりすぎないよう、年ごとに分けて掲載しています。</p>\n\n"
         "<h2>最近の活動</h2>\n" + records(latest) + "\n"
         "<h2>年ごとの活動</h2>\n" + cards(entries) + "\n"
-        '<figure>\n'
-        '  <img src="../assets/img/workshop.jpg"\n'
-        '       alt="ワークショップの様子を4枚並べた写真。会議室でのスライドを使った講義、点字ブロックが敷かれた通路を歩く参加者、エプロン姿でピザ生地に具材をのせる参加者、焼き上がったピザ。">\n'
-        "  <figcaption>各地で開催しているワークショップの様子</figcaption>\n"
-        "</figure>\n"
+        + img(
+            "workshop.jpg",
+            "ワークショップの様子を4枚並べた写真。会議室でのスライドを使った講義、"
+            "点字ブロックが敷かれた通路を歩く参加者、"
+            "エプロン姿でピザ生地に具材をのせる参加者、焼き上がったピザ。",
+            "各地で開催しているワークショップの様子",
+        )
+        + "\n"
     )
 
 
@@ -533,15 +585,15 @@ def _activities_year(i):
         f'<p class="lead">{heading}の記録です（{len(items)}件）。</p>'
     )
     if slug == "2026":
-        body.append(
-            '<figure>\n'
-            '  <img src="../../assets/img/takinogawa-2026.jpg"\n'
-            '       alt="滝野川文化センター区民講座のチラシ。「視覚障害の講師と一緒にピザ＆パンを作って、'
-            'インクルーシブ社会を考える」という見出し。2026年（令和8年）2月22日日曜日、午前10時30分から午後1時まで、'
-            '北区立滝野川文化センターで開催。講師は NPO法人 日本インクルーシブ・クリエーターズ協会の川口育子。">\n'
-            "  <figcaption>2026年2月に開催した区民講座の案内チラシ</figcaption>\n"
-            "</figure>"
-        )
+        body.append(img(
+            "takinogawa-2026.jpg",
+            "滝野川文化センター区民講座のチラシ。「視覚障害の講師と一緒にピザ＆パンを作って、"
+            "インクルーシブ社会を考える」という見出し。2026年（令和8年）2月22日日曜日、"
+            "午前10時30分から午後1時まで、北区立滝野川文化センターで開催。"
+            "講師は NPO法人 日本インクルーシブ・クリエーターズ協会の川口育子。",
+            "2026年2月に開催した区民講座の案内チラシ",
+            base="../../",
+        ))
     body.append(records(items))
 
     prev_link = next_link = ""
@@ -562,6 +614,32 @@ def _activities_year(i):
 
 
 # =====================================================================
+# 旧サイト（WordPress）のアドレスからの転送
+# =====================================================================
+# 旧サイトは /?page_id=3 のように、ページの指定が「?」以降に入っていた。
+# 静的なホスティングは「?」以降を見分けられないので、トップページに
+# 届いた時点で新しいアドレスへ送り直す。外部記事や配布資料に残っている
+# リンクを切らさないための保険。
+#
+# Cloudflare を使う場合は管理画面のリダイレクト設定でも同じことができる
+# （README 参照）。両方入れておくと、JavaScript が無効な環境でも転送される。
+
+OLD_URL_REDIRECT = """<script>
+(function () {
+  var map = {
+    "181": "/about/",
+    "3": "/braille-block/",
+    "195": "/activities/",
+    "9": "/contact/"
+  };
+  var m = /[?&]page_id=(\\d+)/.exec(location.search);
+  if (m && map[m[1]]) { location.replace(map[m[1]]); }
+})();
+</script>
+"""
+
+
+# =====================================================================
 # ページ一覧（build.py がこれを読んで書き出す）
 # =====================================================================
 
@@ -571,6 +649,7 @@ PAGES = [
         "title": "NPO法人 NICA（ナイカ）｜特定非営利活動法人 日本インクルーシブ・クリエーターズ協会",
         "desc": "視覚に障害のある方々と共に社会課題を洗い出し、解決策を提案するNPO法人です。コード化点字ブロックの普及、インクルーシブデザイン研修などに取り組んでいます。",
         "body": HOME,
+        "extra_head": OLD_URL_REDIRECT,
     },
     {
         "slug": "mission/",

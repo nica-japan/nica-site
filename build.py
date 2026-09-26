@@ -89,8 +89,21 @@ TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
+{robots}<link rel="icon" href="{base}assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{base}assets/apple-touch-icon.png">
+<meta name="theme-color" content="#1c2630">
+{canonical}<meta property="og:type" content="website">
+<meta property="og:site_name" content="{SITE_NAME}">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="{ogtitle}">
+<meta property="og:description" content="{desc}">
+<meta property="og:image" content="{BASE_URL}/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NPO法人 NICA（ナイカ）特定非営利活動法人 日本インクルーシブ・クリエーターズ協会">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="{base}assets/style.css">
-</head>
+{extra_head}</head>
 <body>
 <a class="skip" href="#main">本文へスキップ</a>
 
@@ -134,12 +147,25 @@ TEMPLATE = """<!DOCTYPE html>
 
 
 def render(slug: str, title: str, desc: str, body: str, trail=None,
-           base=None, out=None) -> None:
+           base=None, out=None, extra_head="", indexable=True) -> None:
     base = base if base is not None else rel(slug)
     full_title = title if slug == "" else f"{title}｜{SITE_NAME}"
+    if indexable:
+        url = f"{BASE_URL}/{slug}"
+        canonical = f'<link rel="canonical" href="{url}">\n'
+        canonical += f'<meta property="og:url" content="{url}">\n'
+        robots = ""
+    else:
+        canonical = ""
+        robots = '<meta name="robots" content="noindex">\n'
     page = TEMPLATE.format(
         title=html.escape(full_title),
+        ogtitle=html.escape(title),
         desc=html.escape(desc),
+        canonical=canonical,
+        robots=robots,
+        extra_head=extra_head,
+        BASE_URL=BASE_URL,
         base=base,
         sitesub=SITE_SUB,
         nav=nav_html(slug, base),
@@ -153,6 +179,14 @@ def render(slug: str, title: str, desc: str, body: str, trail=None,
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print("  ", out.relative_to(ROOT))
+
+
+def robots() -> None:
+    (ROOT / "robots.txt").write_text(
+        "User-agent: *\nAllow: /\n\n"
+        f"Sitemap: {BASE_URL}/sitemap.xml\n",
+        encoding="utf-8",
+    )
 
 
 def sitemap(slugs) -> None:
@@ -171,7 +205,8 @@ def main() -> None:
     print("ページを生成します:")
     slugs = []
     for p in content.PAGES:
-        render(p["slug"], p["title"], p["desc"], p["body"], p.get("trail"))
+        render(p["slug"], p["title"], p["desc"], p["body"], p.get("trail"),
+               extra_head=p.get("extra_head", ""))
         slugs.append(p["slug"])
 
     # 404ページ。GitHub Pages がどの階層のURLに対しても返すため、
@@ -183,9 +218,11 @@ def main() -> None:
         content.NOT_FOUND,
         base="/",
         out=ROOT / "404.html",
+        indexable=False,
     )
 
     sitemap(slugs)
+    robots()
     print(f"完了: {len(slugs)} ページ + 404 + sitemap.xml")
 
 

@@ -1,0 +1,38 @@
+{
+  "flyer-code-braille-block.jpg": {
+    "width": 960,
+    "height": 1387,
+    "jpg": "flyer-code-braille-block.jpg",
+    "webp": "flyer-code-braille-block.webp"
+  },
+  "rakutenchi-newsletter-807.jpg": {
+    "width": 725,
+    "height": 1024,
+    "jpg": "rakutenchi-newsletter-807.jpg",
+    "webp": "rakutenchi-newsletter-807.webp"
+  },
+  "takinogawa-2026.jpg": {
+    "width": 725,
+    "height": 1024,
+    "jpg": "takinogawa-2026.jpg",
+    "webp": "takinogawa-2026.webp"
+  },
+  "video-marui-kinshicho.jpg": {
+    "width": 1280,
+    "height": 720,
+    "jpg": "video-marui-kinshicho.jpg",
+    "webp": "video-marui-kinshicho.webp"
+  },
+  "video-rakutenchi.jpg": {
+    "width": 1280,
+    "height": 720,
+    "jpg": "video-rakutenchi.jpg",
+    "webp": "video-rakutenchi.webp"
+  },
+  "workshop.jpg": {
+    "width": 1024,
+    "height": 1024,
+    "jpg": "workshop.jpg",
+    "webp": "workshop.webp"
+  }
+}

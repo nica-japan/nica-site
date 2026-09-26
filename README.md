@@ -6,11 +6,14 @@
 ## 構成
 
 ```
-build.py          ページを書き出すスクリプト
-content.py        載せる文章。ふだん直すのはこのファイルだけ
-assets/style.css  デザイン
-assets/img/       画像
-index.html ほか   build.py が書き出した公開用ファイル（直接編集しない）
+build.py             ページを書き出すスクリプト
+content.py           載せる文章。ふだん直すのはこのファイルだけ
+check.py             書き出した HTML の構造を検査する
+serve.py             手元で確認するためのサーバー
+optimize_images.py   画像を軽くして WebP を作る（画像を足したときだけ）
+assets/style.css     デザイン
+assets/img/          画像と manifest.json（寸法の一覧）
+index.html ほか      build.py が書き出した公開用ファイル（直接編集しない）
 ```
 
 ## 更新のしかた
@@ -65,13 +68,54 @@ python3 serve.py
 - 文字と背景の色のコントラストは WCAG AA（4.5:1）以上。ダークモードにも対応
 - キーボード操作時のフォーカス枠を必ず表示する
 - 動画は `youtube-nocookie.com` で埋め込み、Cookie 同意バナーを不要にしている
-- JavaScript なしで全ページが読める
+- JavaScript なしで全ページが読める（唯一の例外は下記「旧URLからの転送」）
 
 `build.py` 実行後に次のコマンドで構造を検査できる（現在は指摘ゼロ）。
 
 ```bash
 python3 check.py
 ```
+
+## 表示を軽くするためにしていること
+
+- 画像は WebP と JPEG の両方を持ち、`<picture>` で対応している方を返す（約36%削減）
+- すべての画像に `width` / `height` を入れ、読み込み中に文字が飛び跳ねないようにしている
+- 画像は `loading="lazy"`。画面に入るまで読み込まない
+- 紹介動画は、再生ボタンを押すまで YouTube へ通信しない。サムネイルは自前で持ち、
+  `<details>` で包んでいるので JavaScript は不要。Cookie 同意バナーも要らない
+- 画像を差し替えたら `python3 optimize_images.py` を実行する
+  （Pillow が必要：`pip3 install Pillow`）
+
+## 旧URLからの転送
+
+旧サイトは `/?page_id=3` のようなアドレスだった。これが外部記事や配布資料に
+残っているため、転送しないとリンクが切れる。
+
+| 旧アドレス | 新アドレス |
+| --- | --- |
+| `/?page_id=181` | `/about/` |
+| `/?page_id=3` | `/braille-block/` |
+| `/?page_id=195` | `/activities/` |
+| `/?page_id=9` | `/contact/` |
+
+静的なホスティングは「?」以降を見分けられないので、**トップページに小さな
+転送スクリプトを置いている**（`content.py` の `OLD_URL_REDIRECT`）。
+サイトの中で JavaScript を使っているのはここだけで、無効でもトップページが
+表示されるだけで壊れない。
+
+Cloudflare を使う場合は、管理画面の Redirect Rules に同じ対応表を入れておくと、
+JavaScript が無効な環境でも転送される。条件は
+`http.request.uri.query contains "page_id=3"` のように書く。
+
+## 検索・共有まわり
+
+- 各ページに `canonical` と OGP（`og:title` / `og:description` / `og:image`）を設定済み。
+  LINE や Facebook に貼るとタイトル・説明・画像が表示される
+- 共有画像は `assets/og-image.png`（1200×630）。作り直す手順はこのファイルの
+  コミット履歴を参照
+- `favicon.svg`（点字ブロックの点を模した図案）と `apple-touch-icon.png`
+- `robots.txt` と `sitemap.xml` は `build.py` が自動生成する
+- 404 ページには `noindex` を入れてあるので検索結果には出ない
 
 ## 公開（GitHub Pages）
 

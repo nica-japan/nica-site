@@ -19,6 +19,7 @@ VAGUE = {"コチラ", "こちら", "リンクはコチラ", "動画はコチラ"
 def main() -> int:
     files = sorted(ROOT.rglob("index.html")) + [ROOT / "404.html"]
     problems = []
+    decorative = []
 
     for f in files:
         s = f.read_text(encoding="utf-8")
@@ -33,8 +34,12 @@ def main() -> int:
                 problems.append(f"{name}: {tag} 要素がない")
 
         for m in re.finditer(r"<img\b[^>]*>", s):
-            if 'alt="' not in m.group(0) or re.search(r'alt="\s*"', m.group(0)):
-                problems.append(f"{name}: alt のない画像がある")
+            if 'alt="' not in m.group(0):
+                problems.append(f"{name}: alt 属性のない画像がある")
+            elif re.search(r'alt=""', m.group(0)):
+                # alt="" は「装飾なので読み上げ不要」という意思表示。
+                # 説明が別にあるか目視で確かめられるよう件数だけ出す。
+                decorative.append(str(name))
 
         for m in re.finditer(r"<iframe\b[^>]*>", s):
             if 'title="' not in m.group(0):
@@ -53,6 +58,9 @@ def main() -> int:
                 problems.append(f"{name}: あいまいなリンク文言「{txt}」")
 
     print(f"検査したファイル: {len(files)}")
+    if decorative:
+        print(f"（装飾扱い alt=\"\" の画像: {len(decorative)}件 "
+              f"— {', '.join(sorted(set(decorative)))}）")
     if problems:
         print("\n".join("  - " + p for p in problems))
         return 1
