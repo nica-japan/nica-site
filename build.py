@@ -20,12 +20,19 @@ SITE_NAME = "NPO法人 NICA（ナイカ）"
 SITE_SUB = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
 BASE_URL = "https://www.nica-japan.jp"
 
+# ヘッダーのメニュー。項目を増やしすぎると読み上げでも目視でも探しにくいので、
+# 「寄付のお願い」はここには置かず、フッターと本文中のリンクから辿る。
 NAV = [
     ("", "ホーム"),
     ("mission/", "ミッション"),
     ("about/", "NICAとは"),
     ("braille-block/", "コード化点字ブロック"),
     ("activities/", "活動報告"),
+    ("contact/", "お問い合わせ"),
+]
+
+# フッターのメニューは全ページへの入口なので「寄付のお願い」も載せる。
+FOOTER_NAV = NAV[:-1] + [
     ("donate/", "寄付のお願い"),
     ("contact/", "お問い合わせ"),
 ]
@@ -37,10 +44,10 @@ def rel(from_slug: str) -> str:
     return "../" * depth if depth else "./"
 
 
-def nav_html(slug: str, base=None) -> str:
+def nav_html(slug: str, base=None, items_src=None) -> str:
     base = base if base is not None else rel(slug)
     items = []
-    for href, label in NAV:
+    for href, label in (items_src if items_src is not None else NAV):
         # 現在地の判定（トップだけは完全一致）
         current = slug == href
         attr = ' aria-current="page"' if current else ""
@@ -130,7 +137,7 @@ def render(slug: str, title: str, desc: str, body: str, trail=None,
         base=base,
         sitesub=SITE_SUB,
         nav=nav_html(slug, base),
-        fnav=nav_html(slug, base),
+        fnav=nav_html(slug, base, FOOTER_NAV),
         crumbs=crumbs_html(slug, trail or [], base),
         body=body.rstrip(),
         SITE_NAME=SITE_NAME,
