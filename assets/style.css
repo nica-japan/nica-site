@@ -1,0 +1,401 @@
+@charset "utf-8";
+
+/* =========================================================
+   NPO法人 NICA サイト共通スタイル
+   ・スクリーンリーダー／キーボード操作を前提に設計
+   ・JavaScript は使用しない
+   ========================================================= */
+
+:root {
+  --bg:        #fffdf8;
+  --surface:   #ffffff;
+  --text:      #1c2630;
+  --text-soft: #4a5560;
+  --line:      #d9d2c4;
+  --accent:    #f2b705;   /* 点字ブロックの黄色 */
+  --accent-dk: #8a6400;
+  --link:      #0a5c78;
+  --link-hov:  #063e52;
+  --focus:     #0a5c78;
+  --shade:     #f4f1e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #14191f;
+    --surface:   #1c232b;
+    --text:      #eef2f6;
+    --text-soft: #bcc6d0;
+    --line:      #3a444f;
+    --accent:    #ffc823;
+    --accent-dk: #ffc823;
+    --link:      #7cc7e8;
+    --link-hov:  #a8dcf3;
+    --focus:     #7cc7e8;
+    --shade:     #232b34;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+               "Yu Gothic Medium", "Yu Gothic", Meiryo, sans-serif;
+  font-size: 1.0625rem;      /* 17px */
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+  text-size-adjust: 100%;
+}
+
+/* ---------- リンク ---------- */
+a { color: var(--link); text-underline-offset: 0.2em; }
+a:hover { color: var(--link-hov); }
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.ext { font-size: 0.85em; color: var(--text-soft); white-space: nowrap; }
+
+/* ---------- スキップリンク ---------- */
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--surface);
+  color: var(--link);
+  padding: 0.8em 1.2em;
+  border: 3px solid var(--focus);
+  z-index: 100;
+}
+.skip:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+/* ---------- レイアウト ---------- */
+.wrap {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+/* ---------- ヘッダー ---------- */
+.band {
+  height: 0.5rem;
+  background:
+    repeating-linear-gradient(90deg,
+      var(--accent) 0 1.1rem, transparent 1.1rem 2.2rem);
+  background-color: var(--shade);
+}
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.site-header .wrap { padding-block: 1.1rem 0; }
+
+.site-title {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+.site-title a {
+  color: var(--text);
+  text-decoration: none;
+  display: inline-block;
+}
+.site-title a:hover { text-decoration: underline; }
+.site-title .en { letter-spacing: 0.12em; }
+.site-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+/* ---------- ナビゲーション ---------- */
+.nav { margin-top: 0.9rem; }
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.1rem;
+}
+.nav a {
+  display: block;
+  padding: 0.55rem 0.85rem;
+  text-decoration: none;
+  color: var(--text);
+  border-bottom: 4px solid transparent;
+  font-size: 0.98rem;
+}
+.nav a:hover {
+  background: var(--shade);
+  text-decoration: underline;
+}
+.nav a[aria-current="page"] {
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+
+/* ---------- パンくず ---------- */
+.crumbs {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin: 1.2rem 0 0;
+}
+.crumbs ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
+}
+.crumbs li::after { content: "›"; margin-left: 0.4em; color: var(--line); }
+.crumbs li:last-child::after { content: ""; }
+
+/* ---------- 本文 ---------- */
+main { display: block; }
+.page { padding-block: 1.6rem 3.5rem; }
+
+h1 {
+  font-size: 1.65rem;
+  line-height: 1.5;
+  margin: 0.6rem 0 0.4rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 5px solid var(--accent);
+}
+.lead {
+  font-size: 1.08rem;
+  color: var(--text-soft);
+  margin: 0 0 1.8rem;
+}
+
+h2 {
+  font-size: 1.28rem;
+  line-height: 1.6;
+  margin: 2.6rem 0 0.9rem;
+  padding-left: 0.7rem;
+  border-left: 6px solid var(--accent);
+}
+h3 {
+  font-size: 1.08rem;
+  margin: 1.8rem 0 0.6rem;
+}
+p { margin: 0 0 1.25rem; }
+
+ul, ol { margin: 0 0 1.4rem; padding-left: 1.4em; }
+li { margin-bottom: 0.5rem; }
+
+strong { font-weight: 700; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5rem 0;
+}
+
+/* ---------- カード（入口リンク） ---------- */
+.cards {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+@media (min-width: 40rem) {
+  .cards { grid-template-columns: 1fr 1fr; }
+}
+.cards li { margin: 0; }
+.cards a {
+  display: block;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  border-radius: 4px;
+  padding: 1rem 1.1rem;
+  text-decoration: none;
+  color: var(--text);
+}
+.cards a:hover {
+  background: var(--shade);
+}
+.cards a:hover .card-title { text-decoration: underline; }
+.card-title {
+  display: block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--link);
+  margin-bottom: 0.2rem;
+}
+.card-desc {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  line-height: 1.75;
+}
+
+/* ---------- 記録リスト ---------- */
+.records {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+}
+.records li {
+  margin: 0;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.records li:first-child { border-top: 1px solid var(--line); }
+.rec-date {
+  margin: 0 0 0.15rem;
+  font-weight: 700;
+  color: var(--accent-dk);
+  font-size: 0.95rem;
+}
+.rec-body { margin: 0; }
+.rec-body + .rec-body { margin-top: 0.5rem; }
+
+/* ---------- 補足ボックス ---------- */
+.note {
+  background: var(--shade);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1.1rem 1.2rem;
+  margin: 0 0 1.8rem;
+}
+.note > :last-child { margin-bottom: 0; }
+.note h2, .note h3 { margin-top: 0; }
+
+.bank {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1.1rem 1.2rem;
+}
+.bank dt {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+.bank dd {
+  margin: 0 0 0.9rem;
+  font-size: 1.05rem;
+}
+.bank dd:last-child { margin-bottom: 0; }
+
+/* ---------- 図・画像 ---------- */
+figure {
+  margin: 0 0 2rem;
+}
+figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+}
+figcaption {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  line-height: 1.75;
+  margin-top: 0.5rem;
+}
+
+/* ---------- 動画 ---------- */
+.video {
+  position: relative;
+  padding-top: 56.25%;
+  margin-bottom: 0.6rem;
+  background: var(--shade);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ---------- ページ送り ---------- */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+
+/* ---------- フッター ---------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding-block: 2rem 2.5rem;
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+.site-footer h2 {
+  font-size: 1rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  border: 0;
+}
+.site-footer address {
+  font-style: normal;
+  margin: 0 0 1.4rem;
+  color: var(--text-soft);
+}
+.footer-nav ul {
+  list-style: none;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+}
+.footer-nav li { margin: 0; }
+.copyright {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+/* ---------- 読み上げ専用 ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- 印刷 ---------- */
+@media print {
+  .nav, .skip, .band, .pager { display: none; }
+  body { font-size: 11pt; background: #fff; color: #000; }
+  a { color: #000; }
+}
