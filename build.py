@@ -89,7 +89,7 @@ TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-{robots}<link rel="icon" href="{base}assets/favicon.svg" type="image/svg+xml">
+{robots}<link rel="icon" href="{base}assets/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="{base}assets/apple-touch-icon.png">
 <meta name="theme-color" content="#1c2630">
 {canonical}<meta property="og:type" content="website">
@@ -109,8 +109,11 @@ TEMPLATE = """<!DOCTYPE html>
 
 <header class="site-header" id="top">
   <div class="wrap">
-    <p class="site-title"><a href="{base}">NPO法人 <span class="en">NICA</span>（ナイカ）</a></p>
-    <p class="site-sub">{sitesub}</p>
+    <p class="site-title"><a href="{base}"><picture>
+      <source srcset="{base}assets/img/logo.webp" type="image/webp">
+      <img class="site-logo" src="{base}assets/img/logo.png" alt=""
+           width="192" height="192" decoding="async">
+    </picture><span class="site-name">NPO法人 <span class="en">NICA</span>（ナイカ）<span class="site-sub">{sitesub}</span></span></a></p>
     <nav class="nav" aria-label="メインメニュー">
       <ul>
 {nav}

@@ -11,6 +11,7 @@ content.py           載せる文章。ふだん直すのはこのファイル�
 check.py             書き出した HTML の構造を検査する
 serve.py             手元で確認するためのサーバー
 optimize_images.py   画像を軽くして WebP を作る（画像を足したときだけ）
+make_brand.py        ロゴからアイコンと共有画像を作る（ロゴを変えたときだけ）
 assets/style.css     デザイン
 assets/img/          画像と manifest.json（寸法の一覧）
 index.html ほか      build.py が書き出した公開用ファイル（直接編集しない）
@@ -111,11 +112,25 @@ JavaScript が無効な環境でも転送される。条件は
 
 - 各ページに `canonical` と OGP（`og:title` / `og:description` / `og:image`）を設定済み。
   LINE や Facebook に貼るとタイトル・説明・画像が表示される
-- 共有画像は `assets/og-image.png`（1200×630）。作り直す手順はこのファイルの
-  コミット履歴を参照
-- `favicon.svg`（点字ブロックの点を模した図案）と `apple-touch-icon.png`
+- 共有画像は `assets/og-image.png`（1200×630）。団体のロゴと名称、活動の一言説明
+- `favicon.png`（タブのアイコン）と `apple-touch-icon.png`（iPhone のホーム画面用）
 - `robots.txt` と `sitemap.xml` は `build.py` が自動生成する
 - 404 ページには `noindex` を入れてあるので検索結果には出ない
+
+## ロゴとアイコン
+
+団体のロゴ（白杖を「I」にした赤い円形マーク）を、ヘッダー・タブのアイコン・
+共有画像に使っている。元データは `assets/img/logo-source.png`。
+
+ロゴを差し替えるときは、その元データを置き換えてから次を実行する。
+
+```bash
+python3 make_brand.py
+```
+
+ヘッダー用のロゴ、favicon、Apple のホーム画面用アイコン、共有画像が
+まとめて作り直される。ヘッダーのロゴには `alt=""` を指定している。
+すぐ隣に団体名が文字で書いてあり、読み上げで二重に読まれても意味がないため。
 
 ## 公開（GitHub Pages）
 
