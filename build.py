@@ -31,10 +31,12 @@ NAV = [
     ("contact/", "お問い合わせ"),
 ]
 
-# フッターのメニューは全ページへの入口なので「寄付のお願い」も載せる。
-FOOTER_NAV = NAV[:-1] + [
+# フッターはヘッダーの繰り返しにせず、ヘッダーにない「寄付のお願い」と、
+# 長いページの末尾から戻るためのリンクだけに絞る。
+FOOTER_NAV = [
     ("donate/", "寄付のお願い"),
     ("contact/", "お問い合わせ"),
+    ("#top", "ページの先頭へ戻る"),
 ]
 
 
@@ -48,10 +50,14 @@ def nav_html(slug: str, base=None, items_src=None) -> str:
     base = base if base is not None else rel(slug)
     items = []
     for href, label in (items_src if items_src is not None else NAV):
-        # 現在地の判定（トップだけは完全一致）
-        current = slug == href
-        attr = ' aria-current="page"' if current else ""
-        url = base + href if href else base
+        if href.startswith("#"):
+            # ページ内リンク（先頭へ戻る）はそのまま使う
+            url, attr = href, ""
+        else:
+            # 現在地の判定（トップだけは完全一致）
+            current = slug == href
+            attr = ' aria-current="page"' if current else ""
+            url = base + href if href else base
         items.append(
             f'      <li><a href="{url}"{attr}>{label}</a></li>'
         )
@@ -88,7 +94,7 @@ TEMPLATE = """<!DOCTYPE html>
 <body>
 <a class="skip" href="#main">本文へスキップ</a>
 
-<header class="site-header">
+<header class="site-header" id="top">
   <div class="wrap">
     <p class="site-title"><a href="{base}">NPO法人 <span class="en">NICA</span>（ナイカ）</a></p>
     <p class="site-sub">{sitesub}</p>
