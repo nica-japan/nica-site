@@ -89,14 +89,6 @@ summary:focus-visible {
 }
 
 /* ---------- ヘッダー ---------- */
-.band {
-  height: 0.5rem;
-  background:
-    repeating-linear-gradient(90deg,
-      var(--accent) 0 1.1rem, transparent 1.1rem 2.2rem);
-  background-color: var(--shade);
-}
-
 .site-header {
   border-bottom: 1px solid var(--line);
   background: var(--surface);
@@ -395,7 +387,7 @@ figcaption {
 
 /* ---------- 印刷 ---------- */
 @media print {
-  .nav, .skip, .band, .pager { display: none; }
+  .nav, .skip, .pager { display: none; }
   body { font-size: 11pt; background: #fff; color: #000; }
   a { color: #000; }
 }

@@ -80,7 +80,6 @@ TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
 <a class="skip" href="#main">本文へスキップ</a>
-<div class="band" aria-hidden="true"></div>
 
 <header class="site-header">
   <div class="wrap">
