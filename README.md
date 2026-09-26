@@ -22,11 +22,15 @@ index.html ほか   build.py が書き出した公開用ファイル（直接編
 python3 build.py
 ```
 
-3. 手元で確認する（<http://localhost:8765> が開く）
+3. 手元で確認する（<http://localhost:8000> が開く）
 
 ```bash
-python3 -m http.server 8765
+python3 serve.py
 ```
+
+`serve.py` はブラウザにキャッシュさせないので、`build.py` で作り直したら
+再読み込みするだけで反映される。`python3 -m http.server` を使うと古い表示が
+残ることがある。
 
 4. 問題なければコミットして push する
 
