@@ -141,7 +141,9 @@ summary:focus-visible {
 .nav li { margin: 0; }
 .nav a {
   display: block;
-  padding: 0.6rem 0.85rem;
+  /* 左右の余白は、6項目が 46rem の枠に1行で収まる範囲で決めている。
+     0.85rem にすると合計が3pxだけ足りず「お問い合わせ」が折り返した。 */
+  padding: 0.6rem 0.7rem;
   text-decoration: none;
   color: var(--text);
   border-bottom: 4px solid transparent;
