@@ -24,10 +24,10 @@
 <script>
 (function () {
   var map = {
-    "181": "/about/",
-    "3": "/braille-block/",
-    "195": "/activities/",
-    "9": "/contact/"
+    "181": "about/",
+    "3": "braille-block/",
+    "195": "activities/",
+    "9": "contact/"
   };
   var m = /[?&]page_id=(\d+)/.exec(location.search);
   if (m && map[m[1]]) { location.replace(map[m[1]]); }

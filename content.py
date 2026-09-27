@@ -631,16 +631,18 @@ def _activities_year(i):
 # 届いた時点で新しいアドレスへ送り直す。外部記事や配布資料に残っている
 # リンクを切らさないための保険。
 #
+# 転送先は相対パスにしてある。独自ドメインの直下でも、
+# https://…github.io/nica-site/ のようなサブフォルダでも同じように動く。
 # Cloudflare を使う場合は管理画面のリダイレクト設定でも同じことができる
 # （README 参照）。両方入れておくと、JavaScript が無効な環境でも転送される。
 
 OLD_URL_REDIRECT = """<script>
 (function () {
   var map = {
-    "181": "/about/",
-    "3": "/braille-block/",
-    "195": "/activities/",
-    "9": "/contact/"
+    "181": "about/",
+    "3": "braille-block/",
+    "195": "activities/",
+    "9": "contact/"
   };
   var m = /[?&]page_id=(\\d+)/.exec(location.search);
   if (m && map[m[1]]) { location.replace(map[m[1]]); }
