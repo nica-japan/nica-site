@@ -205,6 +205,22 @@ h1 {
   margin: 0 0 1.8rem;
 }
 
+/* 団体の標語。見出しに次ぐ大きさで見せる。
+   見出しではないので h2 ではなく段落のままにし、読み上げの見出し一覧が
+   「すべての人が安心して歩ける未来へ」で埋まらないようにしている。 */
+.tagline {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0 0 1.9rem;
+}
+/* iPhone の幅（402px）でも1行に収まる最大の大きさ。
+   1.4rem にすると折り返すため、ここが上限。 */
+@media (max-width: 26rem) {
+  .tagline { font-size: 1.35rem; }
+}
+
 h2 {
   font-size: 1.28rem;
   line-height: 1.6;
