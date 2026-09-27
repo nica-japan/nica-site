@@ -169,7 +169,7 @@ def _home():
     """ + cards([
         ("mission/", "ミッション",
      "私たちが目指す社会について。"),
-        ("about/", "NICAとは",
+        ("about/", "ナイカとは",
      "団体の紹介、取り組み例、法人の概要。"),
         ("braille-block/", "コード化点字ブロック",
      "仕組み、特徴、体験会の記録、紹介動画。"),
@@ -206,7 +206,7 @@ MISSION = """
 
 <hr>
 """ + cards([
-    ("../about/", "NICAとは", "団体の紹介と取り組み例、法人の概要。"),
+    ("../about/", "ナイカとは", "団体の紹介と取り組み例、法人の概要。"),
     ("../braille-block/", "コード化点字ブロック", "私たちが普及を進めている仕組み。"),
 ])
 
@@ -216,7 +216,7 @@ MISSION = """
 # =====================================================================
 
 ABOUT = """
-<h1>NICA（ナイカ）とは</h1>
+<h1>ナイカとは</h1>
 <p class="tagline">すべての人が安心して歩ける未来へ</p>
 
 <p>見えている人には気づきにくい「不親切」。私たちナイカは、視覚に障害のある方々と共に、見えない壁を見つけ、社会を変える活動をしています。</p>
@@ -459,7 +459,7 @@ CONTACT = """
 <h2>Facebook</h2>
 <p>日々の活動の様子は Facebook でも発信しています。</p>
 <p>""" + ext("https://www.facebook.com/nippon.inclusive",
-            "NPO 日本インクルーシブ・クリエーターズ協会（通称 NICA ナイカ）の Facebook ページ") + """</p>
+            "NPO 日本インクルーシブ・クリエーターズ協会（通称ナイカ）の Facebook ページ") + """</p>
 
 <h2>コード化点字ブロックについて</h2>
 <p>敷設場所など技術的な詳細については """ + ext("https://www.wandmsystems.com", "W&Mシステムズ合同会社のホームページ") + """ もあわせてご覧ください。</p>
@@ -809,16 +809,16 @@ PAGES = [
     {
         "slug": "mission/",
         "title": "ミッション",
-        "desc": "NPO法人NICAが目指す社会について。視覚に障害のある方と共に社会課題を洗い出し、ちょっと暮らしやすくなる社会を実現します。",
+        "desc": "NPO法人ナイカが目指す社会について。視覚に障害のある方と共に社会課題を洗い出し、ちょっと暮らしやすくなる社会を実現します。",
         "body": MISSION,
         "trail": [("mission/", "ミッション")],
     },
     {
         "slug": "about/",
-        "title": "NICAとは",
-        "desc": "NPO法人NICA（日本インクルーシブ・クリエーターズ協会）の紹介、取り組み例、法人概要。",
+        "title": "ナイカとは",
+        "desc": "NPO法人ナイカ（日本インクルーシブ・クリエーターズ協会）の紹介、取り組み例、法人概要。",
         "body": ABOUT,
-        "trail": [("about/", "NICAとは")],
+        "trail": [("about/", "ナイカとは")],
     },
     {
         "slug": "braille-block/",
@@ -846,7 +846,7 @@ PAGES = [
     {
         "slug": "activities/",
         "title": "活動報告",
-        "desc": "NPO法人NICAの活動実績。2018年から現在までの講演、研修、ワークショップ、コード化点字ブロックの敷設記録を年ごとに掲載しています。",
+        "desc": "NPO法人ナイカの活動実績。2018年から現在までの講演、研修、ワークショップ、コード化点字ブロックの敷設記録を年ごとに掲載しています。",
         "body": _activities_index(),
         "trail": [("activities/", "活動報告")],
     },
@@ -860,7 +860,7 @@ PAGES = [
     {
         "slug": "contact/",
         "title": "お問い合わせ",
-        "desc": "NPO法人NICAへのお問い合わせ先。体験会のご依頼、研修のご相談、取材などはメールでご連絡ください。",
+        "desc": "NPO法人ナイカへのお問い合わせ先。体験会のご依頼、研修のご相談、取材などはメールでご連絡ください。",
         "body": CONTACT,
         "trail": [("contact/", "お問い合わせ")],
     },
@@ -881,7 +881,7 @@ for _i, (_slug, _heading, _items) in enumerate(ACTIVITIES):
     PAGES.append({
         "slug": f"activities/{_slug}/",
         "title": _heading,
-        "desc": f"NPO法人NICAの{_heading}の記録。",
+        "desc": f"NPO法人ナイカの{_heading}の記録。",
         "body": _activities_year(_i),
         "trail": [("activities/", "活動報告"),
                   (f"activities/{_slug}/", _heading)],

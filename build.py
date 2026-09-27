@@ -46,7 +46,7 @@ SHARE_DESC = (
 NAV = [
     ("", "ホーム"),
     ("mission/", "ミッション"),
-    ("about/", "NICAとは"),
+    ("about/", "ナイカとは"),
     ("braille-block/", "コード化点字ブロック"),
     ("activities/", "活動報告"),
     ("contact/", "お問い合わせ"),
