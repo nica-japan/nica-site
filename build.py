@@ -11,6 +11,7 @@ GitHub Pages の「ブランチのルート」をそのまま公開設定にで�
 
 from pathlib import Path
 import html
+import os
 import re
 
 import content
@@ -18,7 +19,12 @@ import content
 ROOT = Path(__file__).parent
 SITE_NAME = "NPO法人 NICA（ナイカ）"
 SITE_SUB = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
-BASE_URL = "https://www.nica-japan.jp"
+# 公開先のアドレス。canonical、og:url、og:image、sitemap.xml に使う。
+# 独自ドメインに切り替わるまでの仮公開では、環境変数で上書きして作る。
+#   NICA_BASE_URL=https://nica-japan.github.io/nica-site python3 build.py
+# og:image は絶対アドレスで書く必要があり、ここが実際の公開先と食い違うと
+# LINE や SNS が画像を取得できず、カードに画像が出ない。
+BASE_URL = os.environ.get("NICA_BASE_URL", "https://www.nica-japan.jp").rstrip("/")
 
 # LINE や SNS に貼ったときのカードは、どのページでも同じ内容にする。
 # 画像（assets/og-image.png）の下に出る、白地部分の文字がこの2つ。

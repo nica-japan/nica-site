@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.nica-japan.jp/sitemap.xml
+Sitemap: https://nica-japan.github.io/nica-site/sitemap.xml

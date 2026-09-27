@@ -102,3 +102,21 @@ JavaScript が無効な環境でも転送されます。
 Settings → Pages で Source を「Deploy from a branch」、ブランチ `main`、
 フォルダ `/ (root)` に設定します。独自ドメインは Custom domain に入力し、
 DNS を GitHub Pages に向けます。
+
+### 公開先のアドレスについて
+
+`og:image` や `canonical` は絶対アドレスで書く必要があります。ここが実際の
+公開先と食い違うと、LINE や SNS に貼ったときに画像を取得できず、カードに
+画像が出ません。
+
+独自ドメインに切り替わるまでの仮公開では、公開先を指定して作ります。
+
+```bash
+NICA_BASE_URL=https://nica-japan.github.io/nica-site python3 build.py
+```
+
+独自ドメインに切り替えたら、指定なしで作り直してコミットします。
+
+```bash
+python3 build.py
+```
