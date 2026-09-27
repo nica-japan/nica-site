@@ -252,12 +252,38 @@ hr {
   line-height: 1.75;
 }
 
+/* ---------- ページ内目次 ---------- */
+/* 記録が多いページで、読み上げでも目視でも目的の月へ直接飛べるようにする */
+.page-index {
+  background: var(--shade);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.9rem 1.2rem 1rem;
+  margin: 0 0 2rem;
+}
+.page-index h2 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  border: 0;
+}
+.page-index ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+}
+.page-index li { margin: 0; font-size: 0.95rem; }
+
 /* ---------- 記録リスト ---------- */
 .records {
   list-style: none;
   margin: 0 0 2rem;
   padding: 0;
 }
+h2 + .records { margin-top: 0.4rem; }
 .records li {
   margin: 0;
   padding: 1rem 0;
