@@ -26,7 +26,9 @@ NAVY, YELLOW, WHITE, SOFT = "#1c2630", "#f2b705", "#ffffff", "#c8d0d8"
 BOLD = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
 LIGHT = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
 
-VISION = "ちょっと暮らしやすくなる社会へ"
+# 共有画像の大きな一文。トップページの見出しと同じ言葉にして、カードで見た言葉と
+# 開いたページの第一印象を一致させている。
+VISION = "見えない壁を見つけ、社会を変える"
 SUBTITLE = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
 
 
