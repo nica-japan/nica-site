@@ -28,7 +28,6 @@ LIGHT = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
 
 TAGLINE = "見えない壁を見つけ、やさしさに変える"
 SUBTITLE = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
-LEAD = "コード化点字ブロックの普及と、インクルーシブデザインの実践"
 
 
 def trimmed_logo() -> Image.Image:
@@ -47,27 +46,48 @@ def square(logo: Image.Image, size: int, bg=None, pad: float = 0.0) -> Image.Ima
 
 
 def make_og(logo: Image.Image) -> None:
-    og = Image.new("RGB", (1200, 630), NAVY)
+    """LINE や SNS に貼ったときに出る画像（1200×630）。
+
+    上段はロゴと団体の通称だけにして、下段は横幅をいっぱいに使い、
+    正式名称と活動を表す一文を大きく置く。
+    """
+    W, H = 1200, 630
+    MARGIN = 88
+    RIGHT = W - MARGIN
+
+    og = Image.new("RGB", (W, H), NAVY)
     d = ImageDraw.Draw(og)
-    d.rectangle([0, 0, 1200, 14], fill=YELLOW)
+    d.rectangle([0, 0, W, 14], fill=YELLOW)
 
+    # --- 上段：ロゴ ＋ 通称 ---
     mark = logo.copy()
-    mark.thumbnail((236, 236), Image.LANCZOS)
-    og.paste(mark, (88, 197), mark)
+    mark.thumbnail((168, 168), Image.LANCZOS)
+    mark_y = 112
+    og.paste(mark, (MARGIN, mark_y), mark)
 
-    x = 88 + mark.width + 48
+    f_name = ImageFont.truetype(BOLD, 64)
+    name = "NPO法人 NICA（ナイカ）"
+    name_x = MARGIN + mark.width + 40
+    box = d.textbbox((0, 0), name, font=f_name)
+    # ロゴの高さの中心に文字の中心を合わせる
+    name_y = mark_y + (mark.height - (box[3] - box[1])) // 2 - box[1]
+    d.text((name_x, name_y), name, font=f_name, fill=WHITE)
+
+    # --- 仕切り線 ---
+    line_y = mark_y + mark.height + 62
+    d.line([MARGIN, line_y, RIGHT, line_y], fill="#3a444f", width=2)
+    d.line([MARGIN, line_y, MARGIN + 150, line_y], fill=YELLOW, width=4)
+
+    # --- 下段：正式名称と一言。横幅をいっぱいに使う ---
     rows = [
-        (x, 186, "NPO法人 NICA（ナイカ）", ImageFont.truetype(BOLD, 62), WHITE),
-        (x + 2, 274, SUBTITLE, ImageFont.truetype(LIGHT, 26), SOFT),
-        (x, 368, TAGLINE, ImageFont.truetype(BOLD, 32), WHITE),
-        (x + 2, 424, LEAD, ImageFont.truetype(LIGHT, 26), SOFT),
+        (line_y + 46, SUBTITLE, ImageFont.truetype(LIGHT, 36), SOFT),
+        (line_y + 118, TAGLINE, ImageFont.truetype(BOLD, 50), WHITE),
     ]
-    d.line([x + 2, 338, x + 160, 338], fill=YELLOW, width=5)
-    for rx, ry, txt, font, fill in rows:
-        right = d.textbbox((rx, ry), txt, font=font)[2]
-        if right > 1160:
-            print(f"  ※ はみ出し注意（右端 {right}）: {txt}")
-        d.text((rx, ry), txt, font=font, fill=fill)
+    for ry, txt, font, fill in rows:
+        right = d.textbbox((MARGIN, ry), txt, font=font)[2]
+        if right > RIGHT:
+            print(f"  ※ はみ出し注意（右端 {right} > {RIGHT}）: {txt}")
+        d.text((MARGIN, ry), txt, font=font, fill=fill)
 
     og.save(ASSETS / "og-image.png")
 
