@@ -328,10 +328,10 @@ figcaption {
 
 .video-figure details { margin: 0; }
 
+/* summary の display は既定（list-item）のまま変えない。
+   flex などに変えると Safari / VoiceOver がボタンとして読み上げなくなるため、
+   並べたい中身は内側の span で組む。 */
 .video-figure summary {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
   cursor: pointer;
   list-style: none;
   background: var(--surface);
@@ -343,7 +343,13 @@ figcaption {
   color: var(--link);
 }
 .video-figure summary::-webkit-details-marker { display: none; }
+.video-figure summary::marker { content: ""; }
 .video-figure summary:hover { background: var(--shade); text-decoration: underline; }
+.video-figure .summary-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
 
 .video-figure .play {
   flex: none;

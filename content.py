@@ -41,7 +41,7 @@ def img(name, alt, caption, base="../"):
     )
 
 
-def video(vid, thumb, caption, base="../../"):
+def video(vid, thumb, caption, label, base="../../"):
     """動画。開くまで YouTube へ通信しないよう details で包む。
 
     サムネイルは自前で持っているので、閉じている間は外部への通信が
@@ -51,13 +51,13 @@ def video(vid, thumb, caption, base="../../"):
     return (
         '<figure class="video-figure">\n'
         "  <details>\n"
-        "    <summary>\n"
-        '      <span class="play" aria-hidden="true"></span>\n'
-        f"      <span>動画を再生する（YouTube を読み込みます）</span>\n"
-        "    </summary>\n"
+        '    <summary><span class="summary-inner">'
+        '<span class="play" aria-hidden="true"></span>'
+        "<span>動画を再生する（YouTube を読み込みます）</span>"
+        "</span></summary>\n"
         '    <div class="video">\n'
         f'      <iframe src="https://www.youtube-nocookie.com/embed/{vid}"'
-        f' title="{caption}" loading="lazy"'
+        f' title="{label}" loading="lazy"'
         ' allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
         " allowfullscreen></iframe>\n"
         "    </div>\n"
@@ -305,9 +305,11 @@ BLOCK_VIDEOS = """
 """ + video(
     "Ci3t_UwiusA", "video-rakutenchi.jpg",
     "2024年11月、錦糸町の楽天地ビルにて開催した、コード化点字ブロック実証実験の画面収録です。",
+    label="YouTube動画：錦糸町 楽天地ビルでの実証実験",
 ) + "\n\n" + video(
     "iWx9VsSZDQk", "video-marui-kinshicho.jpg",
     "東京都墨田区、マルイ錦糸町店で開催したコード化点字ブロック体験会の様子です。",
+    label="YouTube動画：マルイ錦糸町店での体験会",
 ) + """
 
 <div class="pager">
