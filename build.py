@@ -24,9 +24,12 @@ BASE_URL = "https://www.nica-japan.jp"
 # 画像（assets/og-image.png）の下に出る、白地部分の文字がこの2つ。
 # ページごとの <title> と meta description は検索結果に使うので別に持つ。
 SHARE_TITLE = "NPO法人 NICA（ナイカ）"
+# 画像側のキャッチ（ちょっと暮らしやすくなる社会へ）と言葉が重ならないよう、
+# こちらは「誰と・何を・どうやって」を書く。理念だけでなく実際に手を動かして
+# 形にしている団体であることが伝わるよう、「技術と対話の力で」を入れている。
 SHARE_DESC = (
-    "視覚に障害のある方々と共に、見えない壁を見つけ、"
-    "やさしさに変える活動をしています。"
+    "視覚に障害のある方々と共に社会課題を洗い出し、"
+    "技術と対話の力で解決策を形にしています。"
 )
 
 # ヘッダーのメニュー。項目を増やしすぎると読み上げでも目視でも探しにくいので、
@@ -109,7 +112,7 @@ TEMPLATE = """<!DOCTYPE html>
 <meta property="og:image" content="{BASE_URL}/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="NPO法人 NICA（ナイカ）／特定非営利活動法人 日本インクルーシブ・クリエーターズ協会／誰もがその人らしく生きられる社会">
+<meta property="og:image:alt" content="NPO法人 NICA（ナイカ）／特定非営利活動法人 日本インクルーシブ・クリエーターズ協会／ちょっと暮らしやすくなる社会へ">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="{base}assets/style.css">
 {extra_head}</head>

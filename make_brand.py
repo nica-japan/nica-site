@@ -26,7 +26,7 @@ NAVY, YELLOW, WHITE, SOFT = "#1c2630", "#f2b705", "#ffffff", "#c8d0d8"
 BOLD = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
 LIGHT = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
 
-VISION = "誰もがその人らしく生きられる社会"
+VISION = "ちょっと暮らしやすくなる社会へ"
 SUBTITLE = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
 
 
