@@ -23,6 +23,9 @@ BASE_URL = "https://www.nica-japan.jp"
 # LINE や SNS に貼ったときのカードは、どのページでも同じ内容にする。
 # 画像（assets/og-image.png）の下に出る、白地部分の文字がこの2つ。
 # ページごとの <title> と meta description は検索結果に使うので別に持つ。
+# 団体が持っている外部のページ。フッターとお問い合わせに載せる。
+FACEBOOK_URL = "https://www.facebook.com/nippon.inclusive"
+
 SHARE_TITLE = "NPO法人 NICA（ナイカ）"
 # 画像側のキャッチ（ちょっと暮らしやすくなる社会へ）と言葉が重ならないよう、
 # こちらは「誰と・何を・どうやって」を書く。理念だけでなく実際に手を動かして
@@ -146,7 +149,8 @@ TEMPLATE = """<!DOCTYPE html>
     <h2>{sitesub}</h2>
     <address>
       〒120-0046　東京都足立区小台2-3-21-1005<br>
-      メール：<a href="mailto:contact@nica-japan.jp">contact@nica-japan.jp</a>
+      メール：<a href="mailto:contact@nica-japan.jp">contact@nica-japan.jp</a><br>
+      <a href="{FACEBOOK_URL}">Facebook ページ<span class="ext">（外部サイト）</span></a>
     </address>
     <nav class="footer-nav" aria-label="フッターメニュー">
       <ul>
@@ -189,6 +193,7 @@ def render(slug: str, title: str, desc: str, body: str, trail=None,
         crumbs=crumbs_html(slug, trail or [], base),
         body=body.rstrip(),
         SITE_NAME=SITE_NAME,
+        FACEBOOK_URL=FACEBOOK_URL,
     )
     if out is None:
         out = ROOT / slug / "index.html" if slug else ROOT / "index.html"

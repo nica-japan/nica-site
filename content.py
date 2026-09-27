@@ -360,7 +360,13 @@ CONTACT = """
   <dd><a href="mailto:contact@nica-japan.jp">contact@nica-japan.jp</a></dd>
 </dl>
 
-<p>コード化点字ブロックの敷設場所など、技術的な詳細については """ + ext("https://www.wandmsystems.com", "W&Mシステムズ合同会社のホームページ") + """ もあわせてご覧ください。</p>
+<h2>Facebook</h2>
+<p>日々の活動の様子は Facebook でも発信しています。</p>
+<p>""" + ext("https://www.facebook.com/nippon.inclusive",
+            "NPO 日本インクルーシブ・クリエーターズ協会（通称 NICA ナイカ）の Facebook ページ") + """</p>
+
+<h2>コード化点字ブロックについて</h2>
+<p>敷設場所など技術的な詳細については """ + ext("https://www.wandmsystems.com", "W&Mシステムズ合同会社のホームページ") + """ もあわせてご覧ください。</p>
 """
 
 
