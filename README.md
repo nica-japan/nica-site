@@ -110,9 +110,12 @@ JavaScript が無効な環境でも転送される。条件は
 
 ## 検索・共有まわり
 
-- 各ページに `canonical` と OGP（`og:title` / `og:description` / `og:image`）を設定済み。
-  LINE や Facebook に貼るとタイトル・説明・画像が表示される
-- 共有画像は `assets/og-image.png`（1200×630）。団体のロゴと名称、活動の一言説明
+- 各ページに `canonical` と OGP を設定済み。LINE や Facebook に貼ると
+  画像・タイトル・説明が表示される
+- **共有カードはどのページを貼っても同じ内容**にしている。画像は
+  `assets/og-image.png`（ロゴ・団体名・正式名称・「誰もがその人らしく生きられる社会」）、
+  白地部分に出る文字は `build.py` の `SHARE_TITLE` と `SHARE_DESC`
+- ページごとの `<title>` と `meta description` は別に持っている（検索結果に使うため）
 - `favicon.png`（タブのアイコン）と `apple-touch-icon.png`（iPhone のホーム画面用）
 - `robots.txt` と `sitemap.xml` は `build.py` が自動生成する
 - 404 ページには `noindex` を入れてあるので検索結果には出ない

@@ -27,10 +27,6 @@ BOLD = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
 LIGHT = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
 
 VISION = "誰もがその人らしく生きられる社会"
-DESCRIPTION = [
-    "視覚に障害のある方々と共に、見えない壁を見つけ、",
-    "やさしさに変える活動をしています。",
-]
 SUBTITLE = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
 
 
@@ -52,8 +48,9 @@ def square(logo: Image.Image, size: int, bg=None, pad: float = 0.0) -> Image.Ima
 def make_og(logo: Image.Image) -> None:
     """LINE や SNS に貼ったときに出る画像（1200×630）。
 
-    どのページを貼っても同じこの1枚が出る。上からロゴと団体名、正式名称、
-    目指している社会、活動の説明の順に、上下の区切り線で並べる。
+    画像に入れるのは、ロゴ・団体名・正式名称・目指している社会まで。
+    「視覚に障害のある方々と共に…」の一文は画像ではなくカードの白地部分に
+    出る文字なので、ここではなく build.py の SHARE_DESC で設定している。
     """
     W, H = 1200, 630
     MARGIN = 88
@@ -72,29 +69,24 @@ def make_og(logo: Image.Image) -> None:
 
     # --- ロゴと団体名 ---
     mark = logo.copy()
-    mark.thumbnail((188, 188), Image.LANCZOS)
-    mark_y = 54
+    mark.thumbnail((200, 200), Image.LANCZOS)
+    mark_y = 105
     og.paste(mark, (MARGIN, mark_y), mark)
 
-    f_name = ImageFont.truetype(BOLD, 78)
+    f_name = ImageFont.truetype(BOLD, 82)
     name = "NPO法人 NICA"
     box = d.textbbox((0, 0), name, font=f_name)
     name_y = mark_y + (mark.height - (box[3] - box[1])) // 2 - box[1]
-    put(MARGIN + mark.width + 40, name_y, name, f_name, WHITE)
+    put(MARGIN + mark.width + 42, name_y, name, f_name, WHITE)
 
     # --- 正式名称 ---
-    put(MARGIN, mark_y + mark.height + 26, SUBTITLE,
-        ImageFont.truetype(LIGHT, 30), SOFT)
+    put(MARGIN, mark_y + mark.height + 28, SUBTITLE,
+        ImageFont.truetype(LIGHT, 32), SOFT)
 
-    # --- 目指している社会。上下を線ではさむ ---
-    d.line([MARGIN, 358, RIGHT, 358], fill=RULE, width=2)
-    put(MARGIN, 388, VISION, ImageFont.truetype(BOLD, 52), WHITE)
-    d.line([MARGIN, 470, RIGHT, 470], fill=RULE, width=2)
-
-    # --- 活動の説明 ---
-    f_desc = ImageFont.truetype(LIGHT, 30)
-    for i, row in enumerate(DESCRIPTION):
-        put(MARGIN, 500 + i * 44, row, f_desc, SOFT)
+    # --- 区切り線と、目指している社会 ---
+    rule_y = mark_y + mark.height + 118
+    d.line([MARGIN, rule_y, RIGHT, rule_y], fill=RULE, width=2)
+    put(MARGIN, rule_y + 34, VISION, ImageFont.truetype(BOLD, 56), WHITE)
 
     og.save(ASSETS / "og-image.png")
 

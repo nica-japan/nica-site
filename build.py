@@ -20,6 +20,15 @@ SITE_NAME = "NPO法人 NICA（ナイカ）"
 SITE_SUB = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
 BASE_URL = "https://www.nica-japan.jp"
 
+# LINE や SNS に貼ったときのカードは、どのページでも同じ内容にする。
+# 画像（assets/og-image.png）の下に出る、白地部分の文字がこの2つ。
+# ページごとの <title> と meta description は検索結果に使うので別に持つ。
+SHARE_TITLE = "NPO法人 NICA（ナイカ）"
+SHARE_DESC = (
+    "視覚に障害のある方々と共に、見えない壁を見つけ、"
+    "やさしさに変える活動をしています。"
+)
+
 # ヘッダーのメニュー。項目を増やしすぎると読み上げでも目視でも探しにくいので、
 # 「寄付のお願い」はここには置かず、フッターと本文中のリンクから辿る。
 NAV = [
@@ -96,11 +105,11 @@ TEMPLATE = """<!DOCTYPE html>
 <meta property="og:site_name" content="{SITE_NAME}">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:title" content="{ogtitle}">
-<meta property="og:description" content="{desc}">
+<meta property="og:description" content="{ogdesc}">
 <meta property="og:image" content="{BASE_URL}/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="NPO法人 NICA（ナイカ）特定非営利活動法人 日本インクルーシブ・クリエーターズ協会">
+<meta property="og:image:alt" content="NPO法人 NICA（ナイカ）／特定非営利活動法人 日本インクルーシブ・クリエーターズ協会／誰もがその人らしく生きられる社会">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="{base}assets/style.css">
 {extra_head}</head>
@@ -163,7 +172,8 @@ def render(slug: str, title: str, desc: str, body: str, trail=None,
         robots = '<meta name="robots" content="noindex">\n'
     page = TEMPLATE.format(
         title=html.escape(full_title),
-        ogtitle=html.escape(title),
+        ogtitle=html.escape(SHARE_TITLE),
+        ogdesc=html.escape(SHARE_DESC),
         desc=html.escape(desc),
         canonical=canonical,
         robots=robots,
