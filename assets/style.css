@@ -134,15 +134,19 @@ summary:focus-visible {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.15rem 0.1rem;
+  gap: 0.2rem 0.1rem;
 }
+/* 本文用の余白と行間がそのまま効くと、折り返したときに行が離れすぎる。
+   指で押せる大きさ（縦45px前後）は保ちつつ詰める。 */
+.nav li { margin: 0; }
 .nav a {
   display: block;
-  padding: 0.55rem 0.85rem;
+  padding: 0.6rem 0.85rem;
   text-decoration: none;
   color: var(--text);
   border-bottom: 4px solid transparent;
   font-size: 0.98rem;
+  line-height: 1.45;
 }
 .nav a:hover {
   background: var(--shade);
@@ -165,8 +169,10 @@ summary:focus-visible {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3em;
+  gap: 0.2em 0.3em;
+  line-height: 1.7;
 }
+.crumbs li { margin: 0; }
 /* 区切りの記号は、文字ではなく線で描く。
    CSS で出した文字は読み上げソフトが拾ってしまい、
    「ホーム、く、お知らせ」のように意味のない音が挟まるため。 */
