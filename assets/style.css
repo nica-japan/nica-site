@@ -116,13 +116,17 @@ summary:focus-visible {
   height: 3.25rem;
 }
 .site-name { display: block; }
+
+/* 正式名称は折り返さずに1行で見せたい。ロゴの右ではなく行の下に置いて
+   横幅をすべて使い、画面幅に合わせて字の大きさを決める。
+   29 で割っているのは、この文言が29文字ぶんの幅を必要とするため。 */
 .site-sub {
-  display: block;
-  margin: 0.1rem 0 0;
-  font-size: 0.8rem;
-  font-weight: 400;
+  margin: 0.35rem 0 0;
+  font-size: clamp(0.58rem, calc((100vw - 3.7rem) / 29), 0.85rem);
   color: var(--text-soft);
-  line-height: 1.55;
+  line-height: 1.5;
+  white-space: nowrap;
+  letter-spacing: 0;
 }
 
 @media (max-width: 26rem) {
