@@ -117,17 +117,9 @@ summary:focus-visible {
 }
 .site-name { display: block; }
 
-/* 正式名称は折り返さずに1行で見せたい。ロゴの右ではなく行の下に置いて
-   横幅をすべて使い、画面幅に合わせて字の大きさを決める。
-   29 で割っているのは、この文言が29文字ぶんの幅を必要とするため。 */
-.site-sub {
-  margin: 0.35rem 0 0;
-  font-size: clamp(0.58rem, calc((100vw - 3.7rem) / 29), 0.85rem);
-  color: var(--text-soft);
-  line-height: 1.5;
-  white-space: nowrap;
-  letter-spacing: 0;
-}
+/* 正式名称はヘッダーに置かない。スマホでは折り返すか、折り返さないために
+   字を小さくするしかなく、どちらも読みにくいため。フッターの見出しと
+   「NICAとは」「お問い合わせ」の法人概要に読みやすい大きさで載せている。 */
 
 @media (max-width: 26rem) {
   .site-title { font-size: 1.15rem; }

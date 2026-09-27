@@ -126,7 +126,6 @@ TEMPLATE = """<!DOCTYPE html>
       <img class="site-logo" src="{base}assets/img/logo.png" alt=""
            width="192" height="192" decoding="async">
     </picture><span class="site-name">NPO法人 <span class="en">NICA</span>（ナイカ）</span></a></p>
-    <p class="site-sub">{sitesub}</p>
     <nav class="nav" aria-label="メインメニュー">
       <ul>
 {nav}
