@@ -26,7 +26,11 @@ NAVY, YELLOW, WHITE, SOFT = "#1c2630", "#f2b705", "#ffffff", "#c8d0d8"
 BOLD = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
 LIGHT = "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc"
 
-TAGLINE = "見えない壁を見つけ、やさしさに変える"
+VISION = "誰もがその人らしく生きられる社会"
+DESCRIPTION = [
+    "視覚に障害のある方々と共に、見えない壁を見つけ、",
+    "やさしさに変える活動をしています。",
+]
 SUBTITLE = "特定非営利活動法人 日本インクルーシブ・クリエーターズ協会"
 
 
@@ -48,46 +52,49 @@ def square(logo: Image.Image, size: int, bg=None, pad: float = 0.0) -> Image.Ima
 def make_og(logo: Image.Image) -> None:
     """LINE や SNS に貼ったときに出る画像（1200×630）。
 
-    上段はロゴと団体の通称だけにして、下段は横幅をいっぱいに使い、
-    正式名称と活動を表す一文を大きく置く。
+    どのページを貼っても同じこの1枚が出る。上からロゴと団体名、正式名称、
+    目指している社会、活動の説明の順に、上下の区切り線で並べる。
     """
     W, H = 1200, 630
     MARGIN = 88
     RIGHT = W - MARGIN
+    RULE = "#3d4753"
 
     og = Image.new("RGB", (W, H), NAVY)
     d = ImageDraw.Draw(og)
     d.rectangle([0, 0, W, 14], fill=YELLOW)
 
-    # --- 上段：ロゴ ＋ 通称 ---
-    mark = logo.copy()
-    mark.thumbnail((168, 168), Image.LANCZOS)
-    mark_y = 112
-    og.paste(mark, (MARGIN, mark_y), mark)
-
-    f_name = ImageFont.truetype(BOLD, 64)
-    name = "NPO法人 NICA（ナイカ）"
-    name_x = MARGIN + mark.width + 40
-    box = d.textbbox((0, 0), name, font=f_name)
-    # ロゴの高さの中心に文字の中心を合わせる
-    name_y = mark_y + (mark.height - (box[3] - box[1])) // 2 - box[1]
-    d.text((name_x, name_y), name, font=f_name, fill=WHITE)
-
-    # --- 仕切り線 ---
-    line_y = mark_y + mark.height + 62
-    d.line([MARGIN, line_y, RIGHT, line_y], fill="#3a444f", width=2)
-    d.line([MARGIN, line_y, MARGIN + 150, line_y], fill=YELLOW, width=4)
-
-    # --- 下段：正式名称と一言。横幅をいっぱいに使う ---
-    rows = [
-        (line_y + 46, SUBTITLE, ImageFont.truetype(LIGHT, 36), SOFT),
-        (line_y + 118, TAGLINE, ImageFont.truetype(BOLD, 50), WHITE),
-    ]
-    for ry, txt, font, fill in rows:
-        right = d.textbbox((MARGIN, ry), txt, font=font)[2]
+    def put(x, y, txt, font, fill):
+        right = d.textbbox((x, y), txt, font=font)[2]
         if right > RIGHT:
             print(f"  ※ はみ出し注意（右端 {right} > {RIGHT}）: {txt}")
-        d.text((MARGIN, ry), txt, font=font, fill=fill)
+        d.text((x, y), txt, font=font, fill=fill)
+
+    # --- ロゴと団体名 ---
+    mark = logo.copy()
+    mark.thumbnail((188, 188), Image.LANCZOS)
+    mark_y = 54
+    og.paste(mark, (MARGIN, mark_y), mark)
+
+    f_name = ImageFont.truetype(BOLD, 78)
+    name = "NPO法人 NICA"
+    box = d.textbbox((0, 0), name, font=f_name)
+    name_y = mark_y + (mark.height - (box[3] - box[1])) // 2 - box[1]
+    put(MARGIN + mark.width + 40, name_y, name, f_name, WHITE)
+
+    # --- 正式名称 ---
+    put(MARGIN, mark_y + mark.height + 26, SUBTITLE,
+        ImageFont.truetype(LIGHT, 30), SOFT)
+
+    # --- 目指している社会。上下を線ではさむ ---
+    d.line([MARGIN, 358, RIGHT, 358], fill=RULE, width=2)
+    put(MARGIN, 388, VISION, ImageFont.truetype(BOLD, 52), WHITE)
+    d.line([MARGIN, 470, RIGHT, 470], fill=RULE, width=2)
+
+    # --- 活動の説明 ---
+    f_desc = ImageFont.truetype(LIGHT, 30)
+    for i, row in enumerate(DESCRIPTION):
+        put(MARGIN, 500 + i * 44, row, f_desc, SOFT)
 
     og.save(ASSETS / "og-image.png")
 
