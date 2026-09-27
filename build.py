@@ -150,7 +150,7 @@ TEMPLATE = """<!DOCTYPE html>
     <address>
       〒120-0046　東京都足立区小台2-3-21-1005<br>
       メール：<a href="mailto:contact@nica-japan.jp">contact@nica-japan.jp</a><br>
-      <a href="{FACEBOOK_URL}">Facebook ページ<span class="ext">（外部サイト）</span></a>
+      SNS：<a href="{FACEBOOK_URL}">Facebook<span class="ext">（外部サイト）</span></a>
     </address>
     <nav class="footer-nav" aria-label="フッターメニュー">
       <ul>
