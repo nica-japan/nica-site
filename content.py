@@ -384,9 +384,9 @@ def _events_year(i):
         next_link = f'<a href="../{sg}/">次：{hd}</a>'
     body.append(
         '<div class="pager">\n'
-        f"  {prev_link or '<span></span>'}\n"
+        f"  {prev_link}\n"
         '  <a href="../">体験会の記録の一覧へ</a>\n'
-        f"  {next_link or '<span></span>'}\n"
+        f"  {next_link}\n"
         "</div>"
     )
     return "\n\n".join(body)
@@ -713,9 +713,9 @@ def _activities_year(i):
         next_link = f'<a href="../{s}/">次の年：{h}</a>'
     body.append(
         '<div class="pager">\n'
-        f"  {prev_link or '<span></span>'}\n"
+        f"  {prev_link}\n"
         f'  <a href="../">活動報告の一覧へ</a>\n'
-        f"  {next_link or '<span></span>'}\n"
+        f"  {next_link}\n"
         "</div>"
     )
     return "\n\n".join(body)

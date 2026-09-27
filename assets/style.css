@@ -167,8 +167,20 @@ summary:focus-visible {
   flex-wrap: wrap;
   gap: 0.3em;
 }
-.crumbs li::after { content: "›"; margin-left: 0.4em; color: var(--line); }
-.crumbs li:last-child::after { content: ""; }
+/* 区切りの記号は、文字ではなく線で描く。
+   CSS で出した文字は読み上げソフトが拾ってしまい、
+   「ホーム、く、お知らせ」のように意味のない音が挟まるため。 */
+.crumbs li + li::before {
+  content: "";
+  display: inline-block;
+  width: 0.36em;
+  height: 0.36em;
+  margin-right: 0.45em;
+  border-top: 1.5px solid var(--line);
+  border-right: 1.5px solid var(--line);
+  transform: rotate(45deg);
+  vertical-align: 0.1em;
+}
 
 /* ---------- 本文 ---------- */
 main { display: block; }
