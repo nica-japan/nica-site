@@ -80,13 +80,13 @@ def make_og(logo: Image.Image) -> None:
     put(MARGIN + mark.width + 42, name_y, name, f_name, WHITE)
 
     # --- 正式名称 ---
-    put(MARGIN, mark_y + mark.height + 28, SUBTITLE,
-        ImageFont.truetype(LIGHT, 32), SOFT)
+    put(MARGIN, mark_y + mark.height + 26, SUBTITLE,
+        ImageFont.truetype(LIGHT, 36), SOFT)
 
     # --- 区切り線と、目指している社会 ---
     rule_y = mark_y + mark.height + 118
     d.line([MARGIN, rule_y, RIGHT, rule_y], fill=RULE, width=2)
-    put(MARGIN, rule_y + 34, VISION, ImageFont.truetype(BOLD, 56), WHITE)
+    put(MARGIN, rule_y + 32, VISION, ImageFont.truetype(BOLD, 60), WHITE)
 
     og.save(ASSETS / "og-image.png")
 
