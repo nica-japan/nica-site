@@ -26,6 +26,11 @@ SITE_SUB = "特定非営利活動法人 日本インクルーシブ・クリエ�
 # LINE や SNS が画像を取得できず、カードに画像が出ない。
 BASE_URL = os.environ.get("NICA_BASE_URL", "https://www.nica-japan.jp").rstrip("/")
 
+# Cloudflare Web Analytics のトークン（HTMLに埋め込まれる公開値。秘密情報ではない）
+# 空のままならアクセス解析タグを出力しない
+CF_ANALYTICS_TOKEN = os.environ.get(
+    "NICA_CF_ANALYTICS_TOKEN", "872402d9c09442b2960c776dadfc47d8")
+
 # LINE や SNS に貼ったときのカードは、どのページでも同じ内容にする。
 # 画像（assets/og-image.png）の下に出る、白地部分の文字がこの2つ。
 # ページごとの <title> と meta description は検索結果に使うので別に持つ。
@@ -166,9 +171,21 @@ TEMPLATE = """<!DOCTYPE html>
     <p class="copyright">© {SITE_NAME}</p>
   </div>
 </footer>
-</body>
+{analytics}</body>
 </html>
 """
+
+
+def analytics_html() -> str:
+    """Cloudflare Web Analytics のビーコン。トークン未設定なら空文字。"""
+    if not CF_ANALYTICS_TOKEN:
+        return ""
+    return (
+        "<!-- Cloudflare Web Analytics -->"
+        '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
+        f"data-cf-beacon='{{\"token\": \"{CF_ANALYTICS_TOKEN}\"}}'></script>"
+        "<!-- End Cloudflare Web Analytics -->\n"
+    )
 
 
 def render(slug: str, title: str, desc: str, body: str, trail=None,
@@ -200,6 +217,7 @@ def render(slug: str, title: str, desc: str, body: str, trail=None,
         body=body.rstrip(),
         SITE_NAME=SITE_NAME,
         FACEBOOK_URL=FACEBOOK_URL,
+        analytics=analytics_html(),
     )
     if out is None:
         out = ROOT / slug / "index.html" if slug else ROOT / "index.html"
