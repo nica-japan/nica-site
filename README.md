@@ -7,7 +7,8 @@
 
 ```
 build.py             ページを書き出すスクリプト
-content.py           載せる文章。ふだん直すのはこのファイルだけ
+content.py           載せる文章（活動報告以外）
+data/activities/     活動報告。1件1ファイル（書式は content.py の説明を参照）
 check.py             書き出した HTML の構造を検査する
 serve.py             手元で確認するためのサーバー
 optimize_images.py   画像を軽くして WebP を作る（画像を足したときだけ）
@@ -18,7 +19,7 @@ index.html ほか      build.py が書き出した公開用ファイル（直接
 
 ## 更新のしかた
 
-1. `content.py` の文章を直す
+1. `content.py` の文章を直す（活動報告は `data/activities/` にファイルを足す）
 2. HTML を作り直す
 
 ```bash
