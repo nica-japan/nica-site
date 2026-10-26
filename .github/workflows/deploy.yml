@@ -27,6 +27,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: 新しい画像を最適化する（WebP 作成・位置情報の削除）
+        run: |
+          pip install --quiet pillow
+          python3 optimize_images.py
+
       - name: HTML を書き出す
         run: python3 build.py
 
@@ -38,7 +43,7 @@ jobs:
           rsync -a ./ _site/ \
             --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '_site' \
             --exclude '*.py' --exclude '__pycache__' \
-            --exclude 'data' --exclude 'README.md' --exclude 'source-snapshot.json'
+            --exclude 'data' --exclude 'tools' --exclude 'README.md' --exclude 'source-snapshot.json'
 
       - uses: actions/configure-pages@v6
 
