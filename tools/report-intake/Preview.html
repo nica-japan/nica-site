@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root { --ink: #1c2630; --sub: #4a5866; --line: #c9d1d9; --accent: #1f5f8b; --bad: #a3231f; }
+  body { margin: 0; background: #fff; color: var(--ink);
+         font: 1.125rem/1.8 "Hiragino Sans", "Noto Sans JP", sans-serif; }
+  main { max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.6rem; line-height: 1.4; margin: 0 0 .75rem; }
+  h2 { font-size: 1.25rem; margin: 0 0 .5rem; }
+  .field { margin: 1.5rem 0; }
+  label { display: block; font-weight: 700; }
+  .hint { display: block; color: var(--sub); font-size: 1rem; margin: .15rem 0 .4rem; }
+  input[type=text], input[type=date], textarea {
+    width: 100%; box-sizing: border-box; padding: .6rem .7rem; font: inherit; color: inherit;
+    border: 2px solid var(--line); border-radius: 6px; background: #fff; }
+  textarea { line-height: 1.7; }
+  fieldset { border: 2px solid var(--line); border-radius: 8px; padding: .5rem 1rem 1rem; margin: 2rem 0; }
+  legend { font-weight: 700; font-size: 1.2rem; padding: 0 .4rem; }
+  img { display: block; max-width: 100%; height: auto; border-radius: 4px; margin: .5rem 0; }
+  button { font: inherit; font-weight: 700; min-height: 3rem; padding: .6rem 1.4rem;
+           border-radius: 8px; border: 2px solid var(--accent); cursor: pointer; }
+  .primary { background: var(--accent); color: #fff; width: 100%; }
+  .secondary { background: #fff; color: var(--accent); }
+  :focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+  .errors { border: 2px solid var(--bad); border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  .errors h2 { color: var(--bad); }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0 1.5rem; }
+</style>
+</head>
+<body>
+<main>
+<h1>活動報告の下書き</h1>
+<p>内容を確認し、必要なら直してから「この内容で公開する」を押してください。公開するまで、サイトには載りません。</p>
+
+<? if (errors.length) { ?>
+<div class="errors" role="alert">
+  <h2>公開できませんでした</h2>
+  <ul>
+  <? for (var e = 0; e < errors.length; e++) { ?>
+    <li><?= errors[e] ?></li>
+  <? } ?>
+  </ul>
+</div>
+<? } ?>
+
+<form method="post" action="<?= action ?>">
+  <input type="hidden" name="id" value="<?= d.id ?>">
+  <input type="hidden" name="t" value="<?= d.token ?>">
+
+  <div class="field">
+    <label for="date">活動の日付</label>
+    <input type="date" id="date" name="date" value="<?= d.date ?>" required>
+  </div>
+
+  <div class="field">
+    <label for="body">活動の内容</label>
+    <span class="hint" id="body-hint">段落を分けたいときは、空いた行をはさんでください。</span>
+    <textarea id="body" name="body" rows="8" aria-describedby="body-hint" required><?= d.body ?></textarea>
+  </div>
+
+  <? for (var i = 0; i < photos.length; i++) { var ph = photos[i]; ?>
+  <fieldset>
+    <legend>写真 <?= i + 1 ?></legend>
+    <img src="<?= ph.src ?>" alt="<?= ph.alt ?>">
+    <div class="field">
+      <label for="alt<?= i ?>">写真の説明（読み上げ用）</label>
+      <span class="hint" id="alt<?= i ?>-hint">目の見えない方が写真の内容を知るための文です。AI が作成しました。写真と合っているか確かめてください。空のままでは公開できません。</span>
+      <textarea id="alt<?= i ?>" name="alt<?= i ?>" rows="5" aria-describedby="alt<?= i ?>-hint" required><?= ph.alt ?></textarea>
+    </div>
+    <div class="field">
+      <label for="caption<?= i ?>">写真の見出し</label>
+      <span class="hint" id="caption<?= i ?>-hint">写真の下に表示される短い見出しです。</span>
+      <input type="text" id="caption<?= i ?>" name="caption<?= i ?>" value="<?= ph.caption ?>" aria-describedby="caption<?= i ?>-hint">
+    </div>
+  </fieldset>
+  <? } ?>
+
+  <button type="submit" name="action" value="publish" class="primary">この内容で公開する</button>
+</form>
+
+<hr>
+
+<form method="post" action="<?= action ?>">
+  <input type="hidden" name="id" value="<?= d.id ?>">
+  <input type="hidden" name="t" value="<?= d.token ?>">
+  <p>この報告を載せない場合は、下書きを取り消してください。</p>
+  <button type="submit" name="action" value="cancel" class="secondary">この下書きを取り消す</button>
+</form>
+</main>
+</body>
+</html>

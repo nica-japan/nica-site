@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #fff; color: #1c2630;
+         font: 1.125rem/1.8 "Hiragino Sans", "Noto Sans JP", sans-serif; }
+  main { max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.6rem; line-height: 1.4; }
+  a { color: #1f5f8b; font-weight: 700; }
+  :focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+<h1><?= title ?></h1>
+<? for (var i = 0; i < lines.length; i++) { ?>
+<p><?= lines[i] ?></p>
+<? } ?>
+<? if (link) { ?>
+<p><a href="<?= link.href ?>"><?= link.text ?></a></p>
+<? } ?>
+</main>
+</body>
+</html>

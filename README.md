@@ -13,6 +13,7 @@ check.py             書き出した HTML の構造を検査する
 serve.py             手元で確認するためのサーバー
 optimize_images.py   画像を軽くして WebP を作る（画像を足したときだけ）
 make_brand.py        ロゴからアイコンと共有画像を作る（ロゴを変えたときだけ）
+tools/report-intake/ 活動報告の投稿受付（Google Apps Script）
 assets/              デザイン、画像
 index.html ほか      build.py が書き出した公開用ファイル（直接編集しない）
 ```
