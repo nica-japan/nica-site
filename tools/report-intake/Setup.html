@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root { --ink: #1c2630; --sub: #4a5866; --line: #c9d1d9; --accent: #1f5f8b; --ok: #1a7f37; --bad: #a3231f; }
+  body { margin: 0; background: #fff; color: var(--ink);
+         font: 1.0625rem/1.8 "Hiragino Sans", "Noto Sans JP", sans-serif; }
+  main { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.5rem; line-height: 1.4; margin: 0 0 .75rem; }
+  h2 { font-size: 1.2rem; margin: 2rem 0 .5rem; }
+  .field { margin: 1.25rem 0; }
+  label { display: block; font-weight: 700; }
+  .hint { display: block; color: var(--sub); font-size: .95rem; margin: .1rem 0 .4rem; }
+  input[type=password] { width: 100%; box-sizing: border-box; padding: .6rem .7rem; font: inherit;
+    border: 2px solid var(--line); border-radius: 6px; }
+  button { font: inherit; font-weight: 700; min-height: 3rem; padding: .6rem 1.4rem; border-radius: 8px;
+    border: 2px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; width: 100%; }
+  :focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+  .status { font-size: .95rem; }
+  ul.checks { list-style: none; padding: 0; }
+  ul.checks li { padding: .5rem .75rem; border-left: 4px solid var(--line); margin: .4rem 0; background: #f7f9fa; }
+  ul.checks li.ok { border-color: var(--ok); }
+  ul.checks li.bad { border-color: var(--bad); }
+  ol li { margin: .4rem 0; }
+  code { background: #eef2f5; padding: .05rem .3rem; border-radius: 3px; }
+  a { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<h1>NICA 活動報告の受付　設定</h1>
+
+<? if (result) { ?>
+<section aria-labelledby="result-h" role="status">
+  <h2 id="result-h">確認の結果</h2>
+  <ul class="checks">
+  <? for (var i = 0; i < result.checks.length; i++) { var c = result.checks[i]; ?>
+    <li class="<?= c.ok ? 'ok' : 'bad' ?>"><?= c.ok ? '成功' : '要確認' ?>：<?= c.name ?> — <?= c.detail ?></li>
+  <? } ?>
+  </ul>
+</section>
+
+<? if (result.res) { ?>
+<section aria-labelledby="todo-h">
+  <h2 id="todo-h">残りの作業（フォームの画面で行う）</h2>
+  <p>Apps Script からは設定できない2点です。</p>
+  <ol>
+    <li><a href="<?= result.res.formEditUrl ?>">フォームの編集画面を開く</a></li>
+    <? if (!result.res.hasUpload) { ?>
+    <li>「活動の内容」の下で「＋」を押し、種類を<strong>ファイルのアップロード</strong>にする。
+      質問は <code>写真（任意）</code>、「特定のファイル形式のみ許可」で<strong>画像</strong>、
+      最大ファイル数 <strong>5</strong>、最大サイズ <strong>10 MB</strong>。必須にはしない</li>
+    <? } else { ?>
+    <li>写真の欄：追加済み</li>
+    <? } ?>
+    <li>右上の「設定」→「回答」→「メールアドレスを収集する」を<strong>確認済み</strong>にする</li>
+  </ol>
+  <p>回答用のリンク（お二人にお送りするもの）：<br><a href="<?= result.res.formUrl ?>"><?= result.res.formUrl ?></a></p>
+  <p><a href="<?= result.res.sheetUrl ?>">下書きの一覧（スプレッドシート）</a></p>
+</section>
+<? } ?>
+<? } ?>
+
+<section aria-labelledby="keys-h">
+  <h2 id="keys-h">秘密の値</h2>
+  <p>入力した値は Google のスクリプト プロパティに保存され、この画面には表示されません。
+     変更しないものは空欄のままにしてください。</p>
+  <form method="post" action="<?= action ?>">
+    <input type="hidden" name="action" value="setup">
+    <input type="hidden" name="token" value="<?= token ?>">
+    <div class="field">
+      <label for="github">GitHub トークン</label>
+      <span class="hint" id="github-hint"><code>github_pat_</code> で始まるもの。<span class="status"><?= hasGithub ? '（設定済み）' : '（未設定）' ?></span></span>
+      <input type="password" id="github" name="github" autocomplete="off" spellcheck="false" aria-describedby="github-hint">
+    </div>
+    <div class="field">
+      <label for="anthropic">Anthropic API キー</label>
+      <span class="hint" id="anthropic-hint"><code>sk-ant-</code> で始まるもの。<span class="status"><?= hasAnthropic ? '（設定済み）' : '（未設定）' ?></span></span>
+      <input type="password" id="anthropic" name="anthropic" autocomplete="off" spellcheck="false" aria-describedby="anthropic-hint">
+    </div>
+    <button type="submit">保存して、動作を確かめる</button>
+  </form>
+</section>
+</main>
+</body>
+</html>

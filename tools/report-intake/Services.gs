@@ -11,9 +11,11 @@ var REPO = 'nica-japan/nica-site';
 var BRANCH = 'main';
 var SITE = 'https://www.nica-japan.jp';
 
+/** 設定値。スクリプト プロパティを優先し、なければ Config.local.gs の LOCAL を使う。 */
 function prop_(key) {
   var v = PropertiesService.getScriptProperties().getProperty(key);
-  if (!v) throw new Error('スクリプト プロパティ ' + key + ' が設定されていません');
+  if (!v && typeof LOCAL !== 'undefined' && LOCAL[key]) v = LOCAL[key];
+  if (!v) throw new Error('設定値 ' + key + ' がありません');
   return v;
 }
 

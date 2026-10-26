@@ -1,3 +1,7 @@
 .DS_Store
 __pycache__/
 *.pyc
+
+# 活動報告の受付：この Mac から clasp で送るだけのもの（個人のアドレス・合言葉を含む）
+tools/report-intake/Config.local.gs
+tools/report-intake/.clasp.json

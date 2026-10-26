@@ -8,68 +8,118 @@
  *   2. 投稿者がメールのリンクから確認ページ（doGet）を開き、見直して［公開］→ doPost
  *      → GitHub の nica-site に保存 → GitHub Actions がビルドしてサイトに掲載
  *
- * スクリプト プロパティ（秘密の値はコードに書かない）
- *   GITHUB_TOKEN       nica-site の Contents を読み書きできるトークン
- *   ANTHROPIC_API_KEY  写真の説明文を作るための API キー
- *   ALLOWED_EMAILS     投稿を受け付けるメールアドレス（カンマ区切り）
- *   NOTIFY_EMAIL       公開やエラーを知らせる先
- *   WEBAPP_URL         ウェブアプリとして公開した URL（/exec で終わるもの）
- *   FORM_ID, SHEET_ID, FOLDER_ID   setup() が自動で書き込む
+ * 設定値
+ *   秘密の値はスクリプト プロパティに置く。設定用ページ（?setup=合言葉）から入力する。
+ *     GITHUB_TOKEN       nica-site の Contents を読み書きできるトークン
+ *     ANTHROPIC_API_KEY  写真の説明文を作るための API キー
+ *   それ以外は Config.local.gs の LOCAL に置く（公開リポジトリには含めない）。
+ *     ALLOWED_EMAILS     投稿を受け付けるメールアドレス（カンマ区切り）
+ *     NOTIFY_EMAIL       公開やエラーを知らせる先
+ *     WEBAPP_URL         ウェブアプリの URL（/exec で終わるもの）
+ *     SETUP_TOKEN        設定用ページの合言葉
+ *   setup が自動で書き込むもの：FORM_ID, SHEET_ID, FOLDER_ID
  */
 
 var MAX_PHOTOS = 5;          // フォームの「最大ファイル数」の選択肢（1・5・10）に合わせる
 var DRAFT_DAYS = 14;
 
 /* =====================================================================
- * 初期設定（最初に1回だけ実行する）
+ * 初期設定
  * ===================================================================== */
 
+/**
+ * フォーム・下書き表・写真フォルダ・送信時の自動処理を用意する。
+ * 何度実行しても、すでにあるものは作り直さない。
+ * 設定用ページから呼ばれるほか、エディタで setup を実行してもよい。
+ */
 function setup() {
+  var r = setupResources_();
+  console.log('フォーム（編集）：' + r.formEditUrl);
+  console.log('フォーム（回答）：' + r.formUrl);
+  console.log('下書きの一覧　　：' + r.sheetUrl);
+  return r;
+}
+
+function setupResources_() {
   var props = PropertiesService.getScriptProperties();
+
+  var form;
   if (props.getProperty('FORM_ID')) {
-    throw new Error('すでに設定済みです。作り直す場合は FORM_ID・SHEET_ID・FOLDER_ID を消してから実行してください。');
+    form = FormApp.openById(props.getProperty('FORM_ID'));
+  } else {
+    form = FormApp.create('NICA 活動報告の投稿');
+    form.setDescription([
+      'ホームページの「活動報告」に載せる内容を送ってください。',
+      '送信すると、数分後に下書きがメールで届きます。内容を確認して「公開」を押すまで、サイトには載りません。',
+    ].join('\n'));
+    form.setCollectEmail(true);
+    form.setAllowResponseEdits(false);
+    form.setShowLinkToRespondAgain(true);
+    form.setConfirmationMessage('送信しました。数分後に、下書きをメールでお送りします。');
+    form.addDateItem()
+      .setTitle('活動の日付')
+      .setHelpText('活動を行った日を選んでください。')
+      .setRequired(true);
+    form.addParagraphTextItem()
+      .setTitle('活動の内容')
+      .setHelpText('何を、どこで、どなたと行ったかを書いてください。段落を分けたいときは、空いた行をはさんでください。')
+      .setRequired(true);
+    form.addParagraphTextItem()
+      .setTitle('写真についての補足（任意）')
+      .setHelpText('写真の説明文を作るときの参考にします。例：「左から本間、川口」「ステージで朗読しているところ」');
+    props.setProperty('FORM_ID', form.getId());
   }
 
-  var form = FormApp.create('NICA 活動報告の投稿');
-  form.setDescription([
-    'ホームページの「活動報告」に載せる内容を送ってください。',
-    '送信すると、数分後に下書きがメールで届きます。内容を確認して「公開」を押すまで、サイトには載りません。',
-  ].join('\n'));
-  form.setCollectEmail(true);
-  form.setRequireLogin(false);          // 組織外（個人の Gmail）からも投稿できるようにする
-  form.setAllowResponseEdits(false);
-  form.setShowLinkToRespondAgain(true);
-  form.setConfirmationMessage('送信しました。数分後に、下書きをメールでお送りします。');
+  // 回答できる人を、投稿を受け付ける人だけに限る（個人の Gmail を含む）
+  var readers = 'なし';
+  try {
+    if (form.supportsAdvancedResponderPermissions()) {
+      form.addPublishedReaders(allowedEmails_());
+      readers = allowedEmails_().join('、');
+    } else {
+      form.setRequireLogin(false);
+      readers = 'リンクを知っている全員';
+    }
+    form.setPublished(true);
+  } catch (err) {
+    console.warn('回答者の設定に失敗しました', err);
+    readers = '（自動で設定できませんでした）';
+  }
 
-  form.addDateItem()
-    .setTitle('活動の日付')
-    .setHelpText('活動を行った日を選んでください。')
-    .setRequired(true);
-  form.addParagraphTextItem()
-    .setTitle('活動の内容')
-    .setHelpText('何を、どこで、どなたと行ったかを書いてください。段落を分けたいときは、空いた行をはさんでください。')
-    .setRequired(true);
-  form.addParagraphTextItem()
-    .setTitle('写真についての補足（任意）')
-    .setHelpText('写真の説明文を作るときの参考にします。例：「左から本間、川口」「ステージで朗読しているところ」');
+  var ss;
+  if (props.getProperty('SHEET_ID')) {
+    ss = SpreadsheetApp.openById(props.getProperty('SHEET_ID'));
+  } else {
+    ss = SpreadsheetApp.create('NICA 活動報告の下書き');
+    var sheet = ss.getSheets()[0];
+    sheet.setName('drafts');
+    sheet.appendRow(DRAFT_COLUMNS);
+    sheet.setFrozenRows(1);
+    props.setProperty('SHEET_ID', ss.getId());
+  }
 
-  var ss = SpreadsheetApp.create('NICA 活動報告の下書き');
-  var sheet = ss.getSheets()[0];
-  sheet.setName('drafts');
-  sheet.appendRow(DRAFT_COLUMNS);
-  sheet.setFrozenRows(1);
-  var folder = DriveApp.createFolder('NICA 活動報告の写真（下書き）');
+  if (!props.getProperty('FOLDER_ID')) {
+    props.setProperty('FOLDER_ID', DriveApp.createFolder('NICA 活動報告の写真（下書き）').getId());
+  }
 
-  // 新しい Google フォームは、作っただけでは回答を受け付けない
-  try { form.setPublished(true); } catch (err) { console.warn('フォームの公開は手作業で行ってください', err); }
+  var hasTrigger = ScriptApp.getProjectTriggers().some(function (t) {
+    return t.getHandlerFunction() === 'onFormSubmit';
+  });
+  if (!hasTrigger) ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
 
-  ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
-  props.setProperties({ FORM_ID: form.getId(), SHEET_ID: ss.getId(), FOLDER_ID: folder.getId() });
+  var hasUpload = form.getItems().some(function (it) { return it.getType() === FormApp.ItemType.FILE_UPLOAD; });
+  return {
+    formEditUrl: form.getEditUrl(),
+    formUrl: form.getPublishedUrl(),
+    sheetUrl: ss.getUrl(),
+    readers: readers,
+    hasUpload: hasUpload,
+  };
+}
 
-  console.log('フォーム（編集）：' + form.getEditUrl());
-  console.log('フォーム（回答）：' + form.getPublishedUrl());
-  console.log('下書きの一覧　　：' + ss.getUrl());
-  console.log('次に、フォームの編集画面で「ファイルのアップロード」の質問を追加してください（手順書を参照）。');
+function allowedEmails_() {
+  return prop_('ALLOWED_EMAILS').toLowerCase().split(',')
+    .map(function (s) { return s.trim(); }).filter(function (s) { return s; });
 }
 
 /* =====================================================================
@@ -78,8 +128,7 @@ function setup() {
 
 function onFormSubmit(e) {
   var email = String(e.response.getRespondentEmail() || '').trim().toLowerCase();
-  var allowed = prop_('ALLOWED_EMAILS').toLowerCase().split(',').map(function (s) { return s.trim(); });
-  if (allowed.indexOf(email) < 0) {
+  if (allowedEmails_().indexOf(email) < 0) {
     notify_('許可されていないアドレスからの投稿を受け付けませんでした', 'アドレス：' + (email || '（不明）'));
     return;
   }
@@ -130,13 +179,16 @@ function readAnswers_(response) {
  * ===================================================================== */
 
 function doGet(e) {
-  var d = checkDraft_(e.parameter || {});
+  var p0 = e.parameter || {};
+  if ('setup' in p0) return setupPage_(p0.setup, null);
+  var d = checkDraft_(p0);
   if (d.page) return d.page;
   return previewPage_(d, []);
 }
 
 function doPost(e) {
   var p = e.parameter || {};
+  if (p.action === 'setup') return handleSetup_(p);
   // 二度押しや同時操作で二重に公開されないよう、1件ずつ処理する
   var lock = LockService.getScriptLock();
   lock.waitLock(120000);
@@ -233,4 +285,76 @@ function messagePage_(title, lines, link) {
   t.link = link;
   return t.evaluate().setTitle(title + '｜NICA')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+/* =====================================================================
+ * 設定用ページ（?setup=合言葉）
+ *   秘密の値を入力し、動作を確かめ、必要なものを用意する。
+ *   トークンの期限が来たときも、ここから貼り替える。
+ * ===================================================================== */
+
+function setupPage_(token, result) {
+  if (!token || token !== prop_('SETUP_TOKEN')) {
+    return messagePage_('ページが見つかりません', [], null);
+  }
+  var props = PropertiesService.getScriptProperties();
+  var t = HtmlService.createTemplateFromFile('Setup');
+  t.action = prop_('WEBAPP_URL');
+  t.token = token;
+  t.hasGithub = !!props.getProperty('GITHUB_TOKEN');
+  t.hasAnthropic = !!props.getProperty('ANTHROPIC_API_KEY');
+  t.result = result;
+  return t.evaluate().setTitle('設定｜NICA 活動報告の受付')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+function handleSetup_(p) {
+  if (!p.token || p.token !== prop_('SETUP_TOKEN')) {
+    return messagePage_('ページが見つかりません', [], null);
+  }
+  var props = PropertiesService.getScriptProperties();
+  if (String(p.github || '').trim()) props.setProperty('GITHUB_TOKEN', String(p.github).trim());
+  if (String(p.anthropic || '').trim()) props.setProperty('ANTHROPIC_API_KEY', String(p.anthropic).trim());
+
+  var checks = [];
+  checks.push(checkGithub_());
+  checks.push(checkAnthropic_());
+  var res = null;
+  try {
+    res = setupResources_();
+    checks.push({ ok: true, name: 'フォーム・下書き表・写真フォルダ・自動処理', detail: '用意できました' });
+    checks.push({ ok: res.readers.indexOf('（') !== 0, name: '回答できる人', detail: res.readers });
+  } catch (err) {
+    checks.push({ ok: false, name: 'フォームなどの用意', detail: String(err.message || err) });
+  }
+  return setupPage_(p.token, { checks: checks, res: res });
+}
+
+function checkGithub_() {
+  var name = 'GitHub トークン';
+  if (!PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN')) {
+    return { ok: false, name: name, detail: '未入力です' };
+  }
+  try {
+    var r = gh_('get', '/contents/data/activities?ref=' + BRANCH);
+    if (r.code === 200) return { ok: true, name: name, detail: 'nica-site を読めました（書き込みは初回の公開で確かめます）' };
+    return { ok: false, name: name, detail: 'HTTP ' + r.code + '（期限切れ・承認待ち・権限不足の可能性）' };
+  } catch (err) {
+    return { ok: false, name: name, detail: String(err.message || err) };
+  }
+}
+
+function checkAnthropic_() {
+  var name = 'Anthropic API キー';
+  var key = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!key) return { ok: false, name: name, detail: '未入力です' };
+  try {
+    // モデル一覧の取得は課金されない
+    var r = UrlFetchApp.fetch('https://api.anthropic.com/v1/models', {
+      headers: { 'x-api-key': key, 'anthropic-version': '2026-10-21' }, muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) return { ok: true, name: name, detail: '使えることを確かめました' };
+    return { ok: false, name: name, detail: 'HTTP ' + r.getResponseCode() + '（キーが正しくない可能性）' };
+  } catch (err) {
+    return { ok: false, name: name, detail: String(err.message || err) };
+  }
 }

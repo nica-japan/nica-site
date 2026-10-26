@@ -1,0 +1,5 @@
+# Apps Script に送らないもの
+test.js
+.clasp.json
+.claspignore
+**/node_modules/**
