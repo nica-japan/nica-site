@@ -17,7 +17,7 @@
  *   FORM_ID, SHEET_ID, FOLDER_ID   setup() が自動で書き込む
  */
 
-var MAX_PHOTOS = 4;
+var MAX_PHOTOS = 5;          // フォームの「最大ファイル数」の選択肢（1・5・10）に合わせる
 var DRAFT_DAYS = 14;
 
 /* =====================================================================
@@ -59,6 +59,9 @@ function setup() {
   sheet.appendRow(DRAFT_COLUMNS);
   sheet.setFrozenRows(1);
   var folder = DriveApp.createFolder('NICA 活動報告の写真（下書き）');
+
+  // 新しい Google フォームは、作っただけでは回答を受け付けない
+  try { form.setPublished(true); } catch (err) { console.warn('フォームの公開は手作業で行ってください', err); }
 
   ScriptApp.newTrigger('onFormSubmit').forForm(form).onFormSubmit().create();
   props.setProperties({ FORM_ID: form.getId(), SHEET_ID: ss.getId(), FOLDER_ID: folder.getId() });
