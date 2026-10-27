@@ -70,21 +70,21 @@ function setupResources_() {
     props.setProperty('FORM_ID', form.getId());
   }
 
-  // 回答できる人を、投稿を受け付ける人だけに限る（個人の Gmail を含む）
-  var readers = 'なし';
-  try {
-    if (form.supportsAdvancedResponderPermissions()) {
-      form.addPublishedReaders(allowedEmails_());
-      readers = allowedEmails_().join('、');
-    } else {
-      form.setRequireLogin(false);
-      readers = 'リンクを知っている全員';
-    }
-    form.setPublished(true);
-  } catch (err) {
-    console.warn('回答者の設定に失敗しました', err);
-    readers = '（自動で設定できませんでした）';
+  // 回答できる人を、投稿を受け付ける人だけに限る（個人の Gmail を含む）。
+  // 1件ずつ追加し、Google アカウントでないアドレスなどで失敗しても他は登録する
+  var added = [], failed = [], readers;
+  if (form.supportsAdvancedResponderPermissions()) {
+    allowedEmails_().forEach(function (email) {
+      try { form.addPublishedReader(email); added.push(email); }
+      catch (err) { failed.push(email + '（' + (err.message || err) + '）'); }
+    });
+    readers = added.join('、') || 'なし';
+    if (failed.length) readers += ' ／ 追加できなかった：' + failed.join('、');
+  } else {
+    form.setRequireLogin(false);
+    readers = 'リンクを知っている全員';
   }
+  try { form.setPublished(true); } catch (err) { console.warn('フォームを公開できませんでした', err); }
 
   var ss;
   if (props.getProperty('SHEET_ID')) {
@@ -113,6 +113,7 @@ function setupResources_() {
     formUrl: form.getPublishedUrl(),
     sheetUrl: ss.getUrl(),
     readers: readers,
+    readersOk: failed.length === 0,
     hasUpload: hasUpload,
   };
 }
@@ -323,7 +324,7 @@ function handleSetup_(p) {
   try {
     res = setupResources_();
     checks.push({ ok: true, name: 'フォーム・下書き表・写真フォルダ・自動処理', detail: '用意できました' });
-    checks.push({ ok: res.readers.indexOf('（') !== 0, name: '回答できる人', detail: res.readers });
+    checks.push({ ok: res.readersOk, name: '回答できる人', detail: res.readers });
   } catch (err) {
     checks.push({ ok: false, name: 'フォームなどの用意', detail: String(err.message || err) });
   }
