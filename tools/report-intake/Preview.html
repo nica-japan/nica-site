@@ -64,7 +64,7 @@
   <? for (var i = 0; i < photos.length; i++) { var ph = photos[i]; ?>
   <fieldset>
     <legend>写真 <?= i + 1 ?></legend>
-    <img src="<?= ph.src ?>" alt="<?= ph.alt ?>">
+    <img src="<?!= ph.src ?>" alt="<?= ph.alt ?>">
     <div class="field">
       <label for="alt<?= i ?>">写真の説明（読み上げ用）</label>
       <span class="hint" id="alt<?= i ?>-hint">目の見えない方が写真の内容を知るための文です。AI が作成しました。写真と合っているか確かめてください。空のままでは公開できません。</span>

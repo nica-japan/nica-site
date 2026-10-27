@@ -270,6 +270,8 @@ function previewPage_(d, errors) {
   t.d = d;
   t.errors = errors;
   t.action = prop_('WEBAPP_URL');
+  // src は「data:image/jpeg;base64,」と写真のバイト列だけから作る。テンプレートの通常の出力は
+  // data: の URL を安全のため消してしまうので、Preview.html ではこの値だけ変換せずに出している
   t.photos = d.photos.map(function (ph) {
     var blob = DriveApp.getFileById(ph.fileId).getBlob();
     return { alt: ph.alt, caption: ph.caption,
